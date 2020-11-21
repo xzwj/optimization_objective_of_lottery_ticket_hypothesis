@@ -7,13 +7,12 @@
 ├── experiments/
 ├── data/
 │   ├── cifar-10-batches-py/
-│   ├── MNIST/
+│   └── MNIST/
 ├── models/
 │   ├── data_loaders.py
 │   ├── nets.py
 │   └── vgg.py
 ├── requirements.txt
-├── search_hyperparams.py
 ├── train.py
 └── utils.py
 ```
