@@ -157,8 +157,6 @@ class LeNet5(nn.Module):
         # Finally we have 10 class
         x = self.fc3(x) # (batch_size, num_class)
 
-        # Apply log softmax on each image's output (this is recommended over applying softmax
-        # since it is numerically more stable)
         return F.log_softmax(x, dim=1)
 
 
