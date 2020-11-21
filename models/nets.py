@@ -9,7 +9,7 @@ import torch.nn.utils.prune as prune
 class Pruner(nn.Module):
     def __init__(self, model):
         super(Pruner, self).__init__()
-        self.masks_before_sigmoid = self.init_masks_before_sigmoid(model)
+        self.masks_before_sigmoid = self._init_masks_before_sigmoid(model)
         
     def forward(self, model):
         for mbs, (name, module) in zip(self.masks_before_sigmoid, model.named_modules()):
@@ -18,11 +18,63 @@ class Pruner(nn.Module):
             # prune
             prune.custom_from_mask(module, name, mask)
 
-    def init_masks_before_sigmoid(self, model):
+    def _init_masks_before_sigmoid(self, model):
         masks_before_sigmoid = []
         for name, module in model.named_modules():
             if isinstance(module, nn.Conv2d) or isinstance(module, nn.Linear):
-                masks_before_sigmoid.append(nn.Parameter())
+                masks_before_sigmoid.append(nn.Parameter()) # TODO
+
+    def get_flat_masks(self): # TODO
+        pass
+
+
+def undo_pruning(module, name): # TODO
+    """Removes the pruning reparameterization from a module and the
+    pruning method from the forward hook. The pruned
+    parameter named ``name`` remains permanently pruned, and the parameter
+    named ``name+'_orig'`` is removed from the parameter list. Similarly,
+    the buffer named ``name+'_mask'`` is removed from the buffers.
+
+    Note:
+        Pruning itself is NOT undone or reversed!
+
+    Args:
+        module (nn.Module): module containing the tensor to prune
+        name (str): parameter name within ``module`` on which pruning
+            will act.
+
+    Examples:
+        >>> m = random_unstructured(nn.Linear(5, 7), name='weight', amount=0.2)
+        >>> m = remove(m, name='weight')
+    """
+    for k, hook in module._forward_pre_hooks.items():
+        if isinstance(hook, BasePruningMethod) and hook._tensor_name == name:
+            hook.remove(module)
+
+
+
+            # to update module[name] to latest trained weights
+            weight = self.apply_mask(module)  # masked weights
+
+            # delete and reset
+            if hasattr(module, self._tensor_name):
+                delattr(module, self._tensor_name)
+            orig = module._parameters[self._tensor_name + "_orig"]
+            orig.data = weight.data
+            del module._parameters[self._tensor_name + "_orig"]
+            del module._buffers[self._tensor_name + "_mask"]
+            setattr(module, self._tensor_name, orig)
+
+
+
+
+            del module._forward_pre_hooks[k]
+            return module
+
+    raise ValueError(
+        "Parameter '{}' of module {} has to be pruned "
+        "before pruning can be undid".format(name, module)
+    )
 
 
 
@@ -226,7 +278,7 @@ class Loss(nn.Module):
         # TODO:
         # 6. define loss2 and loss3
 
-    def forward(self, outputs, labels, masks, flat_model_weights):
+    def forward(self, outputs, labels, flat_masks, flat_model_weights):
         return self.loss1(outputs, labels) + \
                 self.lambda1 * self.loss2(masks) + \
                 self.lambda2 * self.loss3(masks, flat_model_weights)

@@ -60,6 +60,9 @@ def train(model, optimizer, loss_fn, dataloader, metrics, params):
     # with tqdm(total=len(dataloader), ncols=80, disable=True) as t:
     with tqdm(disable=False) as t:
         for i, (train_batch, labels_batch) in enumerate(dataloader):
+            # prune model
+            pruner(model)
+
             # move to GPU if available
             if params.cuda:
                 train_batch, labels_batch = train_batch.cuda(
@@ -71,7 +74,9 @@ def train(model, optimizer, loss_fn, dataloader, metrics, params):
             # compute model output and loss
             output_batch = model(train_batch)
             flat_model_weights = utils.flatten_model_weights(model)
-            loss = loss_fn(output_batch, labels_batch, flat_model_weights)
+            flat_masks = pruner.get_flat_masks()
+            # TODO: Check whether flat_model_weights and flat_masks correspond one to one
+            loss = loss_fn(output_batch, labels_batch, flat_masks, flat_model_weights)
 
             # clear previous gradients, compute gradients of all variables wrt loss
             optimizer.zero_grad()
@@ -225,6 +230,8 @@ def main():
 
     # Define mask method
     pruner = nets.Pruner(model)
+    # Do not actually prune model, so we should undo pruning after each `model.forward()`.
+    model.register_forward_hook(nets.undo_pruning)
 
 
 
