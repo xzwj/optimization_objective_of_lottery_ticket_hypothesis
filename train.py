@@ -11,6 +11,7 @@ import torch.nn as nn
 import torch.optim as optim
 import torch.optim.lr_scheduler as lr_scheduler
 from torch.autograd import Variable
+import torch.nn.utils.prune as prune
 
 import models.nets as nets
 import models.vgg as vgg
@@ -208,7 +209,6 @@ def main():
         model = vgg.VGG(args.model, params).cuda() if params.cuda else nvgg.VGG(args.model, params)
     else:
         model = nets.MLP(params).cuda() if params.cuda else nets.MLP(params)
-
     
     # Define optimizer
     if params.optim == 'sgd':
@@ -222,6 +222,9 @@ def main():
         scheduler = lr_scheduler.StepLR(optimizer, step_size=params.lr_adjust, gamma=0.1)
     else:
         scheduler = None
+
+    # Define mask method
+    pruner = nets.Pruner(model)
 
 
 

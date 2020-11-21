@@ -2,6 +2,125 @@ import torch.nn as nn
 import torch.nn.functional as F
 # import torch
 import numpy as np
+import torch.nn.utils.prune as prune
+# import collections.OrderedDict as OrderedDict
+
+
+class Pruner(nn.Module):
+    def __init__(self, model):
+        super(Pruner, self).__init__()
+        self.masks_before_sigmoid = self.init_masks_before_sigmoid(model)
+        
+    def forward(self, model):
+        for mbs, (name, module) in zip(self.masks_before_sigmoid, model.named_modules()):
+            # get mask
+            mask = torch.sigmoid(mbs)
+            # prune
+            prune.custom_from_mask(module, name, mask)
+
+    def init_masks_before_sigmoid(self, model):
+        masks_before_sigmoid = []
+        for name, module in model.named_modules():
+            if isinstance(module, nn.Conv2d) or isinstance(module, nn.Linear):
+                masks_before_sigmoid.append(nn.Parameter())
+
+
+
+
+
+# class PruneFromOpimizableSoftMask(prune.BasePruningMethod):
+#     PRUNING_TYPE = "global"
+
+#     def __init__(self, model):
+#         self.masks_before_sigmoid = self._init_masks_from_model(model)
+
+#     def _init_masks_from_model(self, model):
+#         pass
+
+#     def compute_mask(self, t, default_mask):
+#         assert default_mask.shape == self.masks_before_sigmoid.shape
+#         mask = default_mask * torch.sigmoid(self.masks_before_sigmoid)
+#         return mask
+#         # return torch.sigmoid(self.masks_before_sigmoid) * default_mask
+
+#     @classmethod
+#     def apply(cls, module, name, mask):
+#         """Adds the forward pre-hook that enables pruning on the fly and
+#         the reparametrization of a tensor in terms of the original tensor
+#         and the pruning mask.
+
+#         Args:
+#             module (nn.Module): module containing the tensor to prune
+#             name (str): parameter name within ``module`` on which pruning
+#                 will act.
+#         """
+#         return super(CustomFromMask, cls).apply(
+#             module, name, mask
+#         )
+
+
+# def custom_global_prune(prune_method):
+#     """Prunes tensor corresponding to parameter called `name` in `module`
+#     by removing every other entry in the tensors.
+#     Modifies module in place (and also return the modified module)
+#     by:
+#     1) adding a named buffer called `name+'_mask'` corresponding to the
+#     binary mask applied to the parameter `name` by the pruning method.
+#     The parameter `name` is replaced by its pruned version, while the
+#     original (unpruned) parameter is stored in a new parameter named
+#     `name+'_orig'`.
+
+#     Args:
+#         prune_method (prune.BasePruningMethod) prune method containing 
+#                 masks
+#         module (nn.Module): module containing the tensor to prune
+#         name (string): parameter name within `module` on which pruning
+#                 will act.
+
+#     Returns:
+#         module (nn.Module): modified (i.e. pruned) version of the input
+#             module
+
+#     Examples:
+#         >>> m = nn.Linear(3, 4)
+#         >>> prune_method = CustomFromSoftMask(m)
+#         >>> custom_global(prune_method, m, name='bias')
+#     """
+#     # for (module, name), 
+#     prune_method.apply()
+#     # return module
+
+
+# def custom_global_prune(prune_method, module, name):
+#     """Prunes tensor corresponding to parameter called `name` in `module`
+#     by removing every other entry in the tensors.
+#     Modifies module in place (and also return the modified module)
+#     by:
+#     1) adding a named buffer called `name+'_mask'` corresponding to the
+#     binary mask applied to the parameter `name` by the pruning method.
+#     The parameter `name` is replaced by its pruned version, while the
+#     original (unpruned) parameter is stored in a new parameter named
+#     `name+'_orig'`.
+
+#     Args:
+#         prune_method (prune.BasePruningMethod) prune method containing 
+#                 masks
+#         module (nn.Module): module containing the tensor to prune
+#         name (string): parameter name within `module` on which pruning
+#                 will act.
+
+#     Returns:
+#         module (nn.Module): modified (i.e. pruned) version of the input
+#             module
+
+#     Examples:
+#         >>> m = nn.Linear(3, 4)
+#         >>> prune_method = CustomFromSoftMask(m)
+#         >>> custom_global(prune_method, m, name='bias')
+#     """
+#     prune_method.apply(module, name)
+#     return module
+        
 
 
 class LeNet5(nn.Module):
@@ -21,17 +140,7 @@ class LeNet5(nn.Module):
         self.fc2 = nn.Linear(120, 84)
         self.fc3 = nn.Linear(84, params.num_class)
 
-        self.masks = []
-
-        # TODO: 
-        # 2. get the shape of a
-        # 3. initial a
-        # 4. z = torch.sigmoid(a)
-
     def forward(self, x):
-        # TODO:
-        # 5. theta * z
-
         # Input: (batch_size, input_channel, input_h, input_w)
         # After Conv2D: (batch_size, 6, input_h - 4, input_w - 4)
         # After MaxPool2D: (batch_size, 6, (input_h - 4) // 2, (input_w - 4) // 2)
@@ -137,7 +246,7 @@ if __name__ == '__main__':
     sys.path.append(".") 
     import utils
 
-    params = utils.Params('./experiments/cifar10_lenet5/params.json')
+    params = utils.Params('./experiments/mnist_mlp/params.json')
     model = LeNet5(params)
     print(model)
     x = torch.randn(2,3,32,32)
