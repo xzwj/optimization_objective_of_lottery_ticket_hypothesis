@@ -143,7 +143,7 @@ def train_and_evaluate(pruner, model, train_dataloader, val_dataloader, optimize
         restore_path = os.path.join(
             model_dir, restore_file + '.pth.tar')
         logging.info("Restoring parameters from {}".format(restore_path))
-        utils.load_checkpoint(restore_path, model, optimizer)
+        utils.load_checkpoint(restore_path, model, pruner, optimizer)
 
     best_val_acc = 0.0
 
@@ -167,6 +167,7 @@ def train_and_evaluate(pruner, model, train_dataloader, val_dataloader, optimize
         # Save weights
         utils.save_checkpoint({'epoch': epoch + 1,
                                'state_dict': model.state_dict(),
+                               'pruner_dict': pruner.state_dict(),
                                'optim_dict': optimizer.state_dict()},
                               is_best=is_best,
                               checkpoint=model_dir)
@@ -231,7 +232,7 @@ def main():
     pruner = nets.Pruner(model, params.mask_init)
     
     # Define optimizer
-    optim_params = list(model.parameters()) + pruner.masks_before_sigmoid
+    optim_params = list(model.parameters()) + list(pruner.parameters())
     if params.optim == 'sgd':
         optimizer = optim.SGD(optim_params, lr=params.lr, momentum=params.momentum, 
                                 weight_decay=(params.wd if params.dict.get('wd') is not None else 0.0))

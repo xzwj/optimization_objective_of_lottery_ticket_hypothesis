@@ -28,7 +28,7 @@ class Pruner(nn.Module):
             if isinstance(mod, nn.Conv2d) or isinstance(mod, nn.Linear):
                 masks_before_sigmoid.append(nn.Parameter(torch.full_like(mod.weight.data, mask_init), requires_grad=True))
                 masks_before_sigmoid.append(nn.Parameter(torch.full_like(mod.bias.data, mask_init), requires_grad=True))
-        return masks_before_sigmoid
+        return nn.ParameterList(masks_before_sigmoid)
 
     def get_flat_masks(self):
         return torch.cat(tuple(torch.flatten(torch.sigmoid(mbs)) for mbs in self.masks_before_sigmoid))
