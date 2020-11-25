@@ -47,6 +47,12 @@ def undo_pruning(module, name): # TODO
         >>> m = random_unstructured(nn.Linear(5, 7), name='weight', amount=0.2)
         >>> m = remove(m, name='weight')
     """
+
+    # TODO:
+    # 1. copy `module.name+'_orig'` to `module.name`
+    # 2. prune.remove(model, name)
+
+
     for k, hook in module._forward_pre_hooks.items():
         if isinstance(hook, BasePruningMethod) and hook._tensor_name == name:
             hook.remove(module)
@@ -265,23 +271,36 @@ metrics = {
 
 class Loss(nn.Module):
     """docstring for Loss"""
-    def __init__(self, params, flatten_model_orig_weights):
+    def __init__(self, params, flat_model_orig_weights):
+        """
+        Args:
+            flat_model_orig_weights: size (total_num_model_params)
+        """
         super(Loss, self).__init__()
 
         self.lambda1 = params.lambda1
         self.lambda2 = params.lambda2
 
         self.flat_model_orig_weights = flat_model_orig_weights
+        self.len_flat_model_weight = flat_model_orig_weights.shape[0]
 
-        self.loss1 = nn.NLLLoss()
-        # self.loss2 = 
-        # TODO:
-        # 6. define loss2 and loss3
+        self.loss1 = nn.NLLLoss()   
 
     def forward(self, outputs, labels, flat_masks, flat_model_weights):
         return self.loss1(outputs, labels) + \
-                self.lambda1 * self.loss2(masks) + \
-                self.lambda2 * self.loss3(masks, flat_model_weights)
+                self.lambda1 * self.loss2(flat_masks) + \
+                self.lambda2 * self.loss3(flat_masks, flat_model_weights)
+
+    def loss2(self, flat_masks):
+        l1_norm = torch.norm(flat_masks, p=1)
+        return l1_norm / self.len_flat_model_weight
+
+    def loss3(self, flat_masks, flat_model_weights):
+        l2_norm = torch.norm(flat_model_weights * flat_masks - flat_model_orig_weights * flat_masks, p=2)
+        return l2_norm / self.len_flat_model_weight
+
+
+    
 
 
         
@@ -290,20 +309,33 @@ class Loss(nn.Module):
 
 
 if __name__ == '__main__':
-    # Test for class `LeNet5`
     import torch
     import sys 
     sys.path.append(".") 
     import utils
 
-    params = utils.Params('./experiments/mnist_mlp/params.json')
+    # Test for class `LeNet5`
+    params = utils.Params('./experiments/mnist_lenet5/params.json')
     model = LeNet5(params)
     print(model)
-    x = torch.randn(2,3,32,32)
-    print(x)
+
+    # Test for class `Loss`
+    flat_model_orig_weights = utils.flatten_model_weights(model)
+    loss_fn = Loss(params, flat_model_orig_weights)
+
+    x = torch.randn(2,1,28,28)
     y = model(x)
-    print(y)
-    print(y.size())
+    labels = torch.tensor([1, 0])
+    flat_model_weights = torch.randn(44426)
+    flat_masks = torch.randn(44426)
+    loss = loss_fn(y, labels, flat_masks, flat_model_weights)
+    print('loss', loss)
+
+    # x = torch.randn(2,3,32,32)
+    # print(x)
+    # y = model(x)
+    # print(y)
+    # print(y.size())
     
 
 
