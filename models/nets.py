@@ -3,7 +3,6 @@ import torch.nn.functional as F
 import torch
 import numpy as np
 import torch.nn.utils.prune as prune
-# import collections.OrderedDict as OrderedDict
 
 
 class Pruner(nn.Module):
@@ -31,35 +30,10 @@ class Pruner(nn.Module):
         
 
 
-def undo_pruning(model): # TODO
-    """Removes the pruning reparameterization from a module and the
-    pruning method from the forward hook. The pruned
-    parameter named ``name`` remains permanently pruned, and the parameter
-    named ``name+'_orig'`` is removed from the parameter list. Similarly,
-    the buffer named ``name+'_mask'`` is removed from the buffers.
-
-    Note:
-        Pruning itself is NOT undone or reversed!
-
-    Args:
-        module (nn.Module): module containing the tensor to prune
-        name (str): parameter name within ``module`` on which pruning
-            will act.
-
-    Examples:
-        >>> m = random_unstructured(nn.Linear(5, 7), name='weight', amount=0.2)
-        >>> m = remove(m, name='weight')
-    """
-
-    # TODO:
-    # 1. copy `module.name+'_orig'` to `module.name`
-    # 2. prune.remove(model, name)
-
+def undo_pruning(model): 
     for name, mod in model.named_modules():
         mod.weight_mask.fill_(1.0)
         mod.bias_mask.fill_(1.0)
-        # mod.weight.data = mod.weight_orig.data
-        # mod.bias.data = mod.bias_orig.data
 
         prune.remove(mod, 'weight')
         prune.remove(mod, 'bias')
