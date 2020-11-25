@@ -1,31 +1,34 @@
 import torch.nn as nn
 import torch.nn.functional as F
-# import torch
+import torch
 import numpy as np
 import torch.nn.utils.prune as prune
 # import collections.OrderedDict as OrderedDict
 
 
 class Pruner(nn.Module):
-    def __init__(self, model):
+    def __init__(self, model, mask_init):
         super(Pruner, self).__init__()
-        self.masks_before_sigmoid = self._init_masks_before_sigmoid(model)
+        self.masks_before_sigmoid = self._init_masks_before_sigmoid(model, mask_init)
         
     def forward(self, model):
-        for mbs, (name, module) in zip(self.masks_before_sigmoid, model.named_modules()):
+        for mbs, (name, mod) in zip(self.masks_before_sigmoid, model.named_modules()):
             # get mask
             mask = torch.sigmoid(mbs)
             # prune
-            prune.custom_from_mask(module, name, mask)
+            prune.custom_from_mask(mod, name, mask)
 
-    def _init_masks_before_sigmoid(self, model):
+    def _init_masks_before_sigmoid(self, model, mask_init):
         masks_before_sigmoid = []
-        for name, module in model.named_modules():
-            if isinstance(module, nn.Conv2d) or isinstance(module, nn.Linear):
-                masks_before_sigmoid.append(nn.Parameter()) # TODO
+        for name, mod in model.named_modules():
+            if isinstance(mod, nn.Conv2d) or isinstance(mod, nn.Linear):
+                masks_before_sigmoid.append(nn.Parameter(torch.full_like(mod.weight.data, mask_init), requires_grad=True))
+                masks_before_sigmoid.append(nn.Parameter(torch.full_like(mod.bias.data, mask_init), requires_grad=True))
+        return masks_before_sigmoid
 
-    def get_flat_masks(self): # TODO
-        pass
+    def get_flat_masks(self):
+        return torch.cat(tuple(torch.flatten(torch.sigmoid(mbs)) for mbs in self.masks_before_sigmoid))
+        
 
 
 def undo_pruning(module, name): # TODO
@@ -314,12 +317,12 @@ if __name__ == '__main__':
     sys.path.append(".") 
     import utils
 
-    # Test for class `LeNet5`
+    # ================== Test for class `LeNet5` ==================
     params = utils.Params('./experiments/mnist_lenet5/params.json')
     model = LeNet5(params)
     print(model)
 
-    # Test for class `Loss`
+    # ================== Test for class `Loss` ==================
     flat_model_orig_weights = utils.flatten_model_weights(model)
     loss_fn = Loss(params, flat_model_orig_weights)
 
@@ -331,11 +334,33 @@ if __name__ == '__main__':
     loss = loss_fn(y, labels, flat_masks, flat_model_weights)
     print('loss', loss)
 
-    # x = torch.randn(2,3,32,32)
-    # print(x)
-    # y = model(x)
-    # print(y)
-    # print(y.size())
+    # ================== Test for class `Pruner.__init__()` ==================
+    module_list = list(model.named_modules())
+    print('module_list', module_list)
+    print('module_list[2]', module_list[2])
+    name, mod = module_list[2]
+    # print('mod.weight', mod.weight)
+    # print('mod.weight.shape', mod.weight.shape)
+    # print('mod.weight.data', mod.weight.data)
+    # print('mod.weight.data.shape', mod.weight.data.shape)
+    # print('mod.weight.data.dtype', mod.weight.data.dtype) # torch.float32
+    # print(torch.tensor([5.0, 5.0]).dtype) # torch.float32
+
+    pruner = Pruner(model, params.mask_init)
+    print('len(pruner.masks_before_sigmoid)', len(pruner.masks_before_sigmoid))
+    for p in pruner.masks_before_sigmoid:
+        print(p.data.shape)
+
+    # ================== Test for class `Pruner.get_flat_masks() ==================
+    # print(list(model.parameters()))
+    print("============")
+    for p in model.parameters():
+        print(p.data.shape)
+
+    flat_masks = pruner.get_flat_masks()
+    print('flat_masks.shape', flat_masks.shape)
+
+
     
 
 

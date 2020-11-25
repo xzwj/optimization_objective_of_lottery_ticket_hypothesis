@@ -75,7 +75,6 @@ def train(model, optimizer, loss_fn, dataloader, metrics, params):
             output_batch = model(train_batch)
             flat_model_weights = utils.flatten_model_weights(model)
             flat_masks = pruner.get_flat_masks()
-            # TODO: Check whether flat_model_weights and flat_masks correspond one to one
             loss = loss_fn(output_batch, labels_batch, flat_masks, flat_model_weights)
 
             # clear previous gradients, compute gradients of all variables wrt loss
@@ -229,7 +228,7 @@ def main():
         scheduler = None
 
     # Define mask method
-    pruner = nets.Pruner(model)
+    pruner = nets.Pruner(model, params.mask_init)
     # Do not actually prune model, so we should undo pruning after each `model.forward()`.
     model.register_forward_hook(nets.undo_pruning)
 
