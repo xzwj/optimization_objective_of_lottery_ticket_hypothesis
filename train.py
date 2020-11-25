@@ -52,6 +52,7 @@ def train(pruner, model, optimizer, loss_fn, dataloader, metrics, params):
 
     # set model to training mode
     model.train()
+    pruner.train()
 
     # summary for current training loop and a running average object for loss
     summ = []
@@ -92,7 +93,7 @@ def train(pruner, model, optimizer, loss_fn, dataloader, metrics, params):
             # performs updates using calculated gradients
             optimizer.step()
 
-            # undo pruning
+            # Do not actually prune model, so we should undo pruning after each batch
             nets.undo_pruning(model)
             
 
@@ -153,10 +154,8 @@ def train_and_evaluate(pruner, model, train_dataloader, val_dataloader, optimize
         # compute number of batches in one epoch (one full pass over the training set)
         train(pruner, model, optimizer, loss_fn, train_dataloader, metrics, params)
 
-        # Evaluate for one epoch on validation set
+        # # Evaluate for one epoch on validation set
         val_metrics = evaluate(pruner, model, loss_fn, val_dataloader, metrics, params)
-
-        
 
         # update learning rate scheduler
         if scheduler is not None:
@@ -227,13 +226,17 @@ def main():
         model = vgg.VGG(args.model, params).cuda() if params.cuda else nvgg.VGG(args.model, params)
     else:
         model = nets.MLP(params).cuda() if params.cuda else nets.MLP(params)
+
+    # Define mask method
+    pruner = nets.Pruner(model, params.mask_init)
     
     # Define optimizer
+    optim_params = list(model.parameters()) + pruner.masks_before_sigmoid
     if params.optim == 'sgd':
-        optimizer = optim.SGD(model.parameters(), lr=params.lr, momentum=params.momentum, 
+        optimizer = optim.SGD(optim_params, lr=params.lr, momentum=params.momentum, 
                                 weight_decay=(params.wd if params.dict.get('wd') is not None else 0.0))
     else:
-        optimizer = optim.Adam(model.parameters(), lr=params.lr, 
+        optimizer = optim.Adam(optim_params, lr=params.lr, 
                                 weight_decay=(params.wd if params.dict.get('wd') is not None else 0.0))
     
     if params.dict.get('lr_adjust') is not None:
@@ -241,16 +244,7 @@ def main():
     else:
         scheduler = None
 
-    # Define mask method
-    pruner = nets.Pruner(model, params.mask_init)
-    # Do not actually prune model, so we should undo pruning after each `model.forward()`.
-    # model.register_forward_hook(nets.undo_pruning) # or before `loss.backward()`?
-
-
-
-
     # fetch loss function and metrics
-    # loss_fn = nn.CrossEntropyLoss()
     flat_model_orig_weights = utils.flatten_model_weights(model)
     loss_fn = nets.Loss(params, flat_model_orig_weights)
     metrics = nets.metrics

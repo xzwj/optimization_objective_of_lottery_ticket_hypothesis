@@ -44,29 +44,30 @@ def evaluate(pruner, model, loss_fn, dataloader, metrics, params):
     # summary for current eval loop
     summ = []
 
-    # compute metrics over the dataset
-    for data_batch, labels_batch in dataloader:
+    with torch.no_grad():
+        # compute metrics over the dataset
+        for data_batch, labels_batch in dataloader:
 
-        # move to GPU if available
-        if params.cuda:
-            data_batch, labels_batch = data_batch.cuda(
-                non_blocking=True), labels_batch.cuda(non_blocking=True)
-        # fetch the next evaluation batch
-        data_batch, labels_batch = Variable(data_batch), Variable(labels_batch)
+            # move to GPU if available
+            if params.cuda:
+                data_batch, labels_batch = data_batch.cuda(
+                    non_blocking=True), labels_batch.cuda(non_blocking=True)
+            # fetch the next evaluation batch
+            data_batch, labels_batch = Variable(data_batch), Variable(labels_batch)
 
-        # compute model output
-        output_batch = model(data_batch)
-        loss = loss_fn(output_batch, labels_batch, flat_masks, flat_model_weights)
+            # compute model output
+            output_batch = model(data_batch)
+            loss = loss_fn(output_batch, labels_batch, flat_masks, flat_model_weights)
 
-        # extract data from torch Variable, move to cpu, convert to numpy arrays
-        output_batch = output_batch.data.cpu().numpy()
-        labels_batch = labels_batch.data.cpu().numpy()
+            # extract data from torch Variable, move to cpu, convert to numpy arrays
+            output_batch = output_batch.data.cpu().numpy()
+            labels_batch = labels_batch.data.cpu().numpy()
 
-        # compute all metrics on this batch
-        summary_batch = {metric: metrics[metric](output_batch, labels_batch)
-                         for metric in metrics}
-        summary_batch['loss'] = loss.item()
-        summ.append(summary_batch)
+            # compute all metrics on this batch
+            summary_batch = {metric: metrics[metric](output_batch, labels_batch)
+                             for metric in metrics}
+            summary_batch['loss'] = loss.item()
+            summ.append(summary_batch)
 
     # compute mean of all metrics in summary
     metrics_mean = {metric: np.mean([x[metric]
@@ -74,6 +75,10 @@ def evaluate(pruner, model, loss_fn, dataloader, metrics, params):
     metrics_string = " ; ".join("{}: {:05.3f}".format(k, v)
                                 for k, v in metrics_mean.items())
     logging.info("- Eval metrics : " + metrics_string)
+
+    # undo pruning
+    nets.undo_pruning(model)
+
     return metrics_mean
 
 

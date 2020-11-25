@@ -14,7 +14,7 @@
     "input_w": 28,
     "num_class": 10,
 
-    "lambda1": 2,
+    "lambda1": 0.5,
     "lambda2": 0.5,
 
     "mask_init": 5.0

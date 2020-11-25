@@ -78,3 +78,124 @@
 2020-11-25 10:01:31,512:INFO: - Eval metrics : accuracy: 0.974 ; loss: 2.068
 2020-11-25 10:01:31,519:INFO: - Found new best accuracy
 2020-11-25 10:01:31,520:INFO: Epoch 2/100
+2020-11-25 10:25:59,190:INFO: Loading the datasets...
+2020-11-25 10:25:59,263:INFO: - done.
+2020-11-25 10:26:00,790:INFO: Starting training for 100 epoch(s)
+2020-11-25 10:26:00,790:INFO: Epoch 1/100
+2020-11-25 10:26:29,875:INFO: - Train metrics: accuracy: 0.734 ; loss: 2.875
+2020-11-25 10:26:31,634:INFO: - Eval metrics : accuracy: 0.696 ; loss: 2.893
+2020-11-25 10:26:31,675:INFO: - Found new best accuracy
+2020-11-25 10:26:31,675:INFO: Epoch 2/100
+2020-11-25 11:03:53,914:INFO: Loading the datasets...
+2020-11-25 11:03:54,049:INFO: - done.
+2020-11-25 11:03:55,549:INFO: Starting training for 100 epoch(s)
+2020-11-25 11:03:55,549:INFO: Epoch 1/100
+2020-11-25 11:05:06,888:INFO: - Train metrics: accuracy: 0.738 ; loss: 2.875
+2020-11-25 11:05:10,658:INFO: - Eval metrics : accuracy: 0.695 ; loss: 2.894
+2020-11-25 11:05:10,678:INFO: - Found new best accuracy
+2020-11-25 11:05:10,678:INFO: Epoch 2/100
+2020-11-25 11:06:22,304:INFO: Loading the datasets...
+2020-11-25 11:06:22,337:INFO: - done.
+2020-11-25 11:06:23,834:INFO: Starting training for 100 epoch(s)
+2020-11-25 11:06:23,834:INFO: Epoch 1/100
+2020-11-25 11:07:35,545:INFO: - Train metrics: accuracy: 0.738 ; loss: 2.878
+2020-11-25 11:07:39,318:INFO: - Eval metrics : accuracy: 0.693 ; loss: 2.901
+2020-11-25 11:07:39,339:INFO: - Found new best accuracy
+2020-11-25 11:07:39,339:INFO: Epoch 2/100
+2020-11-25 11:10:54,267:INFO: Loading the datasets...
+2020-11-25 11:10:54,387:INFO: - done.
+2020-11-25 11:10:55,877:INFO: Starting training for 100 epoch(s)
+2020-11-25 11:10:55,877:INFO: Epoch 1/100
+2020-11-25 11:17:58,371:INFO: Loading the datasets...
+2020-11-25 11:17:58,437:INFO: - done.
+2020-11-25 11:17:59,933:INFO: Starting training for 100 epoch(s)
+2020-11-25 11:17:59,934:INFO: Epoch 1/100
+2020-11-25 11:18:28,623:INFO: - Train metrics: accuracy: 0.740 ; loss: 2.877
+2020-11-25 11:18:30,383:INFO: - Eval metrics : accuracy: 0.693 ; loss: 2.901
+2020-11-25 11:18:30,404:INFO: - Found new best accuracy
+2020-11-25 11:18:30,405:INFO: Epoch 2/100
+2020-11-25 11:19:00,342:INFO: Loading the datasets...
+2020-11-25 11:19:00,371:INFO: - done.
+2020-11-25 11:19:01,850:INFO: Starting training for 100 epoch(s)
+2020-11-25 11:19:01,850:INFO: Epoch 1/100
+2020-11-25 11:20:12,538:INFO: - Train metrics: accuracy: 0.734 ; loss: 2.877
+2020-11-25 11:20:16,300:INFO: - Eval metrics : accuracy: 0.691 ; loss: 2.903
+2020-11-25 11:20:16,314:INFO: - Found new best accuracy
+2020-11-25 11:20:16,315:INFO: Epoch 2/100
+2020-11-25 11:24:15,720:INFO: Loading the datasets...
+2020-11-25 11:24:15,748:INFO: - done.
+2020-11-25 11:24:17,227:INFO: Starting training for 100 epoch(s)
+2020-11-25 11:24:17,227:INFO: Epoch 1/100
+2020-11-25 11:25:28,024:INFO: - Train metrics: accuracy: 0.742 ; loss: 2.874
+2020-11-25 11:25:28,024:INFO: Epoch 2/100
+2020-11-25 11:26:37,567:INFO: - Train metrics: accuracy: 0.747 ; loss: 2.846
+2020-11-25 11:26:37,568:INFO: Epoch 3/100
+2020-11-25 11:28:23,846:INFO: Loading the datasets...
+2020-11-25 11:28:23,876:INFO: - done.
+2020-11-25 11:28:25,384:INFO: Starting training for 100 epoch(s)
+2020-11-25 11:28:25,384:INFO: Epoch 1/100
+2020-11-25 11:29:36,379:INFO: - Train metrics: accuracy: 0.737 ; loss: 2.876
+2020-11-25 11:29:38,034:INFO: - Eval metrics : accuracy: 0.693 ; loss: 2.900
+2020-11-25 11:29:38,034:INFO: Epoch 2/100
+2020-11-25 11:30:44,888:INFO: Loading the datasets...
+2020-11-25 11:30:44,917:INFO: - done.
+2020-11-25 11:30:46,420:INFO: Starting training for 100 epoch(s)
+2020-11-25 11:30:46,420:INFO: Epoch 1/100
+2020-11-25 11:31:58,207:INFO: - Train metrics: accuracy: 0.740 ; loss: 2.872
+2020-11-25 11:31:58,217:INFO: Epoch 2/100
+2020-11-25 11:32:41,841:INFO: Loading the datasets...
+2020-11-25 11:32:41,870:INFO: - done.
+2020-11-25 11:32:43,344:INFO: Starting training for 100 epoch(s)
+2020-11-25 11:32:43,344:INFO: Epoch 1/100
+2020-11-25 11:33:54,745:INFO: - Train metrics: accuracy: 0.740 ; loss: 2.875
+2020-11-25 11:33:54,745:INFO: Epoch 2/100
+2020-11-25 11:35:05,069:INFO: - Train metrics: accuracy: 0.752 ; loss: 2.841
+2020-11-25 11:35:05,069:INFO: Epoch 3/100
+2020-11-25 11:36:58,845:INFO: Loading the datasets...
+2020-11-25 11:36:58,874:INFO: - done.
+2020-11-25 11:37:00,362:INFO: Starting training for 100 epoch(s)
+2020-11-25 11:37:00,362:INFO: Epoch 1/100
+2020-11-25 11:38:12,188:INFO: - Train metrics: accuracy: 0.888 ; loss: 0.820
+2020-11-25 11:38:12,188:INFO: Epoch 2/100
+2020-11-25 11:39:23,322:INFO: - Train metrics: accuracy: 0.977 ; loss: 0.590
+2020-11-25 11:39:23,323:INFO: Epoch 3/100
+2020-11-25 11:42:06,446:INFO: Loading the datasets...
+2020-11-25 11:42:06,475:INFO: - done.
+2020-11-25 11:42:07,973:INFO: Starting training for 100 epoch(s)
+2020-11-25 11:42:07,973:INFO: Epoch 1/100
+2020-11-25 11:43:21,442:INFO: - Train metrics: accuracy: 0.890 ; loss: 0.822
+2020-11-25 11:43:21,453:INFO: Epoch 2/100
+2020-11-25 11:44:27,862:INFO: Loading the datasets...
+2020-11-25 11:44:27,891:INFO: - done.
+2020-11-25 11:44:29,400:INFO: Starting training for 100 epoch(s)
+2020-11-25 11:44:29,400:INFO: Epoch 1/100
+2020-11-25 11:45:42,908:INFO: - Train metrics: accuracy: 0.887 ; loss: 0.826
+2020-11-25 11:45:44,574:INFO: - Eval metrics : accuracy: 0.973 ; loss: 0.583
+2020-11-25 11:45:44,577:INFO: Epoch 2/100
+2020-11-25 11:46:55,706:INFO: - Train metrics: accuracy: 0.982 ; loss: 0.553
+2020-11-25 11:46:57,354:INFO: - Eval metrics : accuracy: 0.983 ; loss: 0.552
+2020-11-25 11:46:57,357:INFO: Epoch 3/100
+2020-11-25 11:50:50,086:INFO: Loading the datasets...
+2020-11-25 11:50:50,115:INFO: - done.
+2020-11-25 11:51:16,576:INFO: Loading the datasets...
+2020-11-25 11:51:16,606:INFO: - done.
+2020-11-25 11:56:26,289:INFO: Loading the datasets...
+2020-11-25 11:56:26,318:INFO: - done.
+2020-11-25 12:01:01,324:INFO: Loading the datasets...
+2020-11-25 12:01:01,355:INFO: - done.
+2020-11-25 12:01:02,857:INFO: Starting training for 100 epoch(s)
+2020-11-25 12:01:02,857:INFO: Epoch 1/100
+2020-11-25 12:01:35,269:INFO: - Train metrics: accuracy: 0.883 ; loss: 0.821
+2020-11-25 12:01:36,915:INFO: - Eval metrics : accuracy: 0.974 ; loss: 0.567
+2020-11-25 12:02:15,935:INFO: Loading the datasets...
+2020-11-25 12:02:15,966:INFO: - done.
+2020-11-25 12:02:17,572:INFO: Starting training for 100 epoch(s)
+2020-11-25 12:02:17,572:INFO: Epoch 1/100
+2020-11-25 12:02:49,852:INFO: - Train metrics: accuracy: 0.885 ; loss: 0.823
+2020-11-25 12:02:51,487:INFO: - Eval metrics : accuracy: 0.975 ; loss: 0.567
+2020-11-25 12:02:51,509:INFO: - Found new best accuracy
+2020-11-25 12:02:51,512:INFO: Epoch 2/100
+2020-11-25 12:03:22,059:INFO: - Train metrics: accuracy: 0.979 ; loss: 0.497
+2020-11-25 12:03:23,693:INFO: - Eval metrics : accuracy: 0.981 ; loss: 0.440
+2020-11-25 12:03:23,707:INFO: - Found new best accuracy
+2020-11-25 12:03:23,710:INFO: Epoch 3/100

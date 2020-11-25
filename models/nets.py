@@ -14,11 +14,11 @@ class Pruner(nn.Module):
         i = 0
         for name, mod in model.named_modules():
             if isinstance(mod, nn.Conv2d) or isinstance(mod, nn.Linear):
-                mask = torch.sigmoid(self.masks_before_sigmoid[i])
-                prune.custom_from_mask(mod, 'weight', mask)
+                weight_mask = torch.sigmoid(self.masks_before_sigmoid[i])
+                prune.custom_from_mask(mod, 'weight', weight_mask)
 
-                mask = torch.sigmoid(self.masks_before_sigmoid[i+1])
-                prune.custom_from_mask(mod, 'bias', mask)
+                bias_mask = torch.sigmoid(self.masks_before_sigmoid[i+1])
+                prune.custom_from_mask(mod, 'bias', bias_mask)
 
                 i += 2
 
