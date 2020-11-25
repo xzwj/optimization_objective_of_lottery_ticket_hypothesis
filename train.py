@@ -230,7 +230,7 @@ def main():
     # Define mask method
     pruner = nets.Pruner(model, params.mask_init)
     # Do not actually prune model, so we should undo pruning after each `model.forward()`.
-    model.register_forward_hook(nets.undo_pruning)
+    model.register_forward_hook(nets.undo_pruning) # or before `loss.backward()`?
 
 
 

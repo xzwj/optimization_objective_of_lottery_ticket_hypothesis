@@ -31,7 +31,7 @@ class Pruner(nn.Module):
         
 
 
-def undo_pruning(module, name): # TODO
+def undo_pruning(model): # TODO
     """Removes the pruning reparameterization from a module and the
     pruning method from the forward hook. The pruned
     parameter named ``name`` remains permanently pruned, and the parameter
@@ -55,132 +55,15 @@ def undo_pruning(module, name): # TODO
     # 1. copy `module.name+'_orig'` to `module.name`
     # 2. prune.remove(model, name)
 
+    for name, mod in model.named_modules():
+        mod.weight_mask.fill_(1.0)
+        mod.bias_mask.fill_(1.0)
+        # mod.weight.data = mod.weight_orig.data
+        # mod.bias.data = mod.bias_orig.data
 
-    for k, hook in module._forward_pre_hooks.items():
-        if isinstance(hook, BasePruningMethod) and hook._tensor_name == name:
-            hook.remove(module)
+        prune.remove(mod, 'weight')
+        prune.remove(mod, 'bias')
 
-
-
-            # to update module[name] to latest trained weights
-            weight = self.apply_mask(module)  # masked weights
-
-            # delete and reset
-            if hasattr(module, self._tensor_name):
-                delattr(module, self._tensor_name)
-            orig = module._parameters[self._tensor_name + "_orig"]
-            orig.data = weight.data
-            del module._parameters[self._tensor_name + "_orig"]
-            del module._buffers[self._tensor_name + "_mask"]
-            setattr(module, self._tensor_name, orig)
-
-
-
-
-            del module._forward_pre_hooks[k]
-            return module
-
-    raise ValueError(
-        "Parameter '{}' of module {} has to be pruned "
-        "before pruning can be undid".format(name, module)
-    )
-
-
-
-
-
-# class PruneFromOpimizableSoftMask(prune.BasePruningMethod):
-#     PRUNING_TYPE = "global"
-
-#     def __init__(self, model):
-#         self.masks_before_sigmoid = self._init_masks_from_model(model)
-
-#     def _init_masks_from_model(self, model):
-#         pass
-
-#     def compute_mask(self, t, default_mask):
-#         assert default_mask.shape == self.masks_before_sigmoid.shape
-#         mask = default_mask * torch.sigmoid(self.masks_before_sigmoid)
-#         return mask
-#         # return torch.sigmoid(self.masks_before_sigmoid) * default_mask
-
-#     @classmethod
-#     def apply(cls, module, name, mask):
-#         """Adds the forward pre-hook that enables pruning on the fly and
-#         the reparametrization of a tensor in terms of the original tensor
-#         and the pruning mask.
-
-#         Args:
-#             module (nn.Module): module containing the tensor to prune
-#             name (str): parameter name within ``module`` on which pruning
-#                 will act.
-#         """
-#         return super(CustomFromMask, cls).apply(
-#             module, name, mask
-#         )
-
-
-# def custom_global_prune(prune_method):
-#     """Prunes tensor corresponding to parameter called `name` in `module`
-#     by removing every other entry in the tensors.
-#     Modifies module in place (and also return the modified module)
-#     by:
-#     1) adding a named buffer called `name+'_mask'` corresponding to the
-#     binary mask applied to the parameter `name` by the pruning method.
-#     The parameter `name` is replaced by its pruned version, while the
-#     original (unpruned) parameter is stored in a new parameter named
-#     `name+'_orig'`.
-
-#     Args:
-#         prune_method (prune.BasePruningMethod) prune method containing 
-#                 masks
-#         module (nn.Module): module containing the tensor to prune
-#         name (string): parameter name within `module` on which pruning
-#                 will act.
-
-#     Returns:
-#         module (nn.Module): modified (i.e. pruned) version of the input
-#             module
-
-#     Examples:
-#         >>> m = nn.Linear(3, 4)
-#         >>> prune_method = CustomFromSoftMask(m)
-#         >>> custom_global(prune_method, m, name='bias')
-#     """
-#     # for (module, name), 
-#     prune_method.apply()
-#     # return module
-
-
-# def custom_global_prune(prune_method, module, name):
-#     """Prunes tensor corresponding to parameter called `name` in `module`
-#     by removing every other entry in the tensors.
-#     Modifies module in place (and also return the modified module)
-#     by:
-#     1) adding a named buffer called `name+'_mask'` corresponding to the
-#     binary mask applied to the parameter `name` by the pruning method.
-#     The parameter `name` is replaced by its pruned version, while the
-#     original (unpruned) parameter is stored in a new parameter named
-#     `name+'_orig'`.
-
-#     Args:
-#         prune_method (prune.BasePruningMethod) prune method containing 
-#                 masks
-#         module (nn.Module): module containing the tensor to prune
-#         name (string): parameter name within `module` on which pruning
-#                 will act.
-
-#     Returns:
-#         module (nn.Module): modified (i.e. pruned) version of the input
-#             module
-
-#     Examples:
-#         >>> m = nn.Linear(3, 4)
-#         >>> prune_method = CustomFromSoftMask(m)
-#         >>> custom_global(prune_method, m, name='bias')
-#     """
-#     prune_method.apply(module, name)
-#     return module
         
 
 
@@ -317,48 +200,69 @@ if __name__ == '__main__':
     sys.path.append(".") 
     import utils
 
-    # ================== Test for class `LeNet5` ==================
-    params = utils.Params('./experiments/mnist_lenet5/params.json')
-    model = LeNet5(params)
-    print(model)
+    # # ================== Test for class `LeNet5` ==================
+    # params = utils.Params('./experiments/mnist_lenet5/params.json')
+    # model = LeNet5(params)
+    # print(model)
 
-    # ================== Test for class `Loss` ==================
-    flat_model_orig_weights = utils.flatten_model_weights(model)
-    loss_fn = Loss(params, flat_model_orig_weights)
+    # # ================== Test for class `Loss` ==================
+    # flat_model_orig_weights = utils.flatten_model_weights(model)
+    # loss_fn = Loss(params, flat_model_orig_weights)
 
-    x = torch.randn(2,1,28,28)
-    y = model(x)
-    labels = torch.tensor([1, 0])
-    flat_model_weights = torch.randn(44426)
-    flat_masks = torch.randn(44426)
-    loss = loss_fn(y, labels, flat_masks, flat_model_weights)
-    print('loss', loss)
+    # x = torch.randn(2,1,28,28)
+    # y = model(x)
+    # labels = torch.tensor([1, 0])
+    # flat_model_weights = torch.randn(44426)
+    # flat_masks = torch.randn(44426)
+    # loss = loss_fn(y, labels, flat_masks, flat_model_weights)
+    # print('loss', loss)
 
-    # ================== Test for class `Pruner.__init__()` ==================
-    module_list = list(model.named_modules())
-    print('module_list', module_list)
-    print('module_list[2]', module_list[2])
-    name, mod = module_list[2]
-    # print('mod.weight', mod.weight)
-    # print('mod.weight.shape', mod.weight.shape)
-    # print('mod.weight.data', mod.weight.data)
-    # print('mod.weight.data.shape', mod.weight.data.shape)
-    # print('mod.weight.data.dtype', mod.weight.data.dtype) # torch.float32
-    # print(torch.tensor([5.0, 5.0]).dtype) # torch.float32
+    # # ================== Test for class `Pruner.__init__()` ==================
+    # module_list = list(model.named_modules())
+    # print('module_list', module_list)
+    # print('module_list[2]', module_list[2])
+    # name, mod = module_list[2]
+    # # print('mod.weight', mod.weight)
+    # # print('mod.weight.shape', mod.weight.shape)
+    # # print('mod.weight.data', mod.weight.data)
+    # # print('mod.weight.data.shape', mod.weight.data.shape)
+    # # print('mod.weight.data.dtype', mod.weight.data.dtype) # torch.float32
+    # # print(torch.tensor([5.0, 5.0]).dtype) # torch.float32
 
-    pruner = Pruner(model, params.mask_init)
-    print('len(pruner.masks_before_sigmoid)', len(pruner.masks_before_sigmoid))
-    for p in pruner.masks_before_sigmoid:
-        print(p.data.shape)
+    # pruner = Pruner(model, params.mask_init)
+    # print('len(pruner.masks_before_sigmoid)', len(pruner.masks_before_sigmoid))
+    # for p in pruner.masks_before_sigmoid:
+    #     print(p.data.shape)
 
-    # ================== Test for class `Pruner.get_flat_masks() ==================
-    # print(list(model.parameters()))
-    print("============")
-    for p in model.parameters():
-        print(p.data.shape)
+    # # ================== Test for class `Pruner.get_flat_masks() ==================
+    # # print(list(model.parameters()))
+    # print("============")
+    # for p in model.parameters():
+    #     print(p.data.shape)
 
-    flat_masks = pruner.get_flat_masks()
-    print('flat_masks.shape', flat_masks.shape)
+    # flat_masks = pruner.get_flat_masks()
+    # print('flat_masks.shape', flat_masks.shape)
+
+    model = nn.Linear(10, 1)
+    print(list(model.named_parameters()))
+    print(list(model.named_buffers()))
+    print('=======1========')
+
+    prune.random_unstructured(model, name="weight", amount=0.3)
+    prune.random_unstructured(model, name="bias", amount=0.3)
+    print(list(model.named_parameters()))
+    print(list(model.named_buffers()))
+    print('=======2========')
+
+    undo_pruning(model)
+    print(list(model.named_parameters()))
+    print(list(model.named_buffers()))
+
+
+
+
+
+
 
 
     
