@@ -22,7 +22,7 @@ parser.add_argument('--restore_file', default='best', help="name of the file in 
                      containing weights to load")
 
 
-def evaluate(model, loss_fn, dataloader, metrics, params):
+def evaluate(pruner, model, loss_fn, dataloader, metrics, params):
     """Evaluate the model on `num_steps` batches.
     Args:
         model: (torch.nn.Module) the neural network
@@ -35,6 +35,11 @@ def evaluate(model, loss_fn, dataloader, metrics, params):
 
     # set model to evaluation mode
     model.eval()
+    pruner.eval()
+
+    pruner(model)
+    flat_model_weights = utils.flatten_model_weights(model)
+    flat_masks = pruner.get_flat_masks()
 
     # summary for current eval loop
     summ = []
@@ -51,7 +56,7 @@ def evaluate(model, loss_fn, dataloader, metrics, params):
 
         # compute model output
         output_batch = model(data_batch)
-        loss = loss_fn(output_batch, labels_batch)
+        loss = loss_fn(output_batch, labels_batch, flat_masks, flat_model_weights)
 
         # extract data from torch Variable, move to cpu, convert to numpy arrays
         output_batch = output_batch.data.cpu().numpy()

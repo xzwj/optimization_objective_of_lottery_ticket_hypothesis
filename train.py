@@ -91,8 +91,10 @@ def train(pruner, model, optimizer, loss_fn, dataloader, metrics, params):
 
             # performs updates using calculated gradients
             optimizer.step()
+
             # undo pruning
             nets.undo_pruning(model)
+            
 
             # Evaluate summaries only once in a while
             if i % params.save_summary_steps == 0:
@@ -153,6 +155,8 @@ def train_and_evaluate(pruner, model, train_dataloader, val_dataloader, optimize
 
         # Evaluate for one epoch on validation set
         val_metrics = evaluate(pruner, model, loss_fn, val_dataloader, metrics, params)
+
+        
 
         # update learning rate scheduler
         if scheduler is not None:
