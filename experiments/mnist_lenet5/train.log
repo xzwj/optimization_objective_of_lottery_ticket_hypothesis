@@ -1,0 +1,47 @@
+2020-11-25 09:09:17,957:INFO: Loading the datasets...
+2020-11-25 09:09:18,126:INFO: - done.
+2020-11-25 09:09:53,595:INFO: Loading the datasets...
+2020-11-25 09:09:53,627:INFO: - done.
+2020-11-25 09:10:03,904:INFO: Starting training for 100 epoch(s)
+2020-11-25 09:10:03,904:INFO: Epoch 1/100
+2020-11-25 09:11:23,647:INFO: Loading the datasets...
+2020-11-25 09:11:23,678:INFO: - done.
+2020-11-25 09:11:25,160:INFO: Starting training for 100 epoch(s)
+2020-11-25 09:11:25,160:INFO: Epoch 1/100
+2020-11-25 09:15:55,577:INFO: Loading the datasets...
+2020-11-25 09:15:55,608:INFO: - done.
+2020-11-25 09:15:57,114:INFO: Starting training for 100 epoch(s)
+2020-11-25 09:15:57,114:INFO: Epoch 1/100
+2020-11-25 09:19:15,721:INFO: Loading the datasets...
+2020-11-25 09:19:15,750:INFO: - done.
+2020-11-25 09:19:17,236:INFO: Starting training for 100 epoch(s)
+2020-11-25 09:19:17,236:INFO: Epoch 1/100
+2020-11-25 09:20:20,127:INFO: Loading the datasets...
+2020-11-25 09:20:20,156:INFO: - done.
+2020-11-25 09:20:21,646:INFO: Starting training for 100 epoch(s)
+2020-11-25 09:20:21,647:INFO: Epoch 1/100
+2020-11-25 09:23:41,700:INFO: Loading the datasets...
+2020-11-25 09:23:41,729:INFO: - done.
+2020-11-25 09:23:43,226:INFO: Starting training for 100 epoch(s)
+2020-11-25 09:23:43,226:INFO: Epoch 1/100
+2020-11-25 09:25:45,711:INFO: Loading the datasets...
+2020-11-25 09:25:45,740:INFO: - done.
+2020-11-25 09:25:47,237:INFO: Starting training for 100 epoch(s)
+2020-11-25 09:25:47,237:INFO: Epoch 1/100
+2020-11-25 09:28:05,730:INFO: Loading the datasets...
+2020-11-25 09:28:05,758:INFO: - done.
+2020-11-25 09:28:07,233:INFO: Starting training for 100 epoch(s)
+2020-11-25 09:28:07,234:INFO: Epoch 1/100
+2020-11-25 09:32:54,101:INFO: Loading the datasets...
+2020-11-25 09:32:54,205:INFO: - done.
+2020-11-25 09:32:55,686:INFO: Starting training for 100 epoch(s)
+2020-11-25 09:32:55,686:INFO: Epoch 1/100
+2020-11-25 09:33:24,994:INFO: Loading the datasets...
+2020-11-25 09:33:25,024:INFO: - done.
+2020-11-25 09:33:26,511:INFO: Starting training for 100 epoch(s)
+2020-11-25 09:33:26,511:INFO: Epoch 1/100
+2020-11-25 09:34:07,896:INFO: Loading the datasets...
+2020-11-25 09:34:07,925:INFO: - done.
+2020-11-25 09:34:09,426:INFO: Starting training for 100 epoch(s)
+2020-11-25 09:34:09,426:INFO: Epoch 1/100
+2020-11-25 09:34:37,758:INFO: - Train metrics: accuracy: 0.890 ; loss: 2.313

@@ -25,11 +25,11 @@ parser.add_argument('--dataset',
                     choices=['cifar10', 'mnist'],
                     help="Choose dataset (cifar10 or mnist)")
 parser.add_argument('--model', 
-                    default='mlp',
+                    default='lenet5',
                     choices=['lenet5', 'vgg11', 'vgg13', 'vgg16', 'vgg19', 'mlp'],
                     help="Choose model (lenet5, vgg[11, 13, 16, 19], or mlp")
 parser.add_argument('--model_dir', 
-                    default='experiments/mnist_mlp',
+                    default='experiments/mnist_lenet5',
                     help="Directory containing params.json")
 parser.add_argument('--restore_file', 
                     default=None,
@@ -38,7 +38,7 @@ parser.add_argument('--restore_file',
                     training")
 
 
-def train(model, optimizer, loss_fn, dataloader, metrics, params):
+def train(pruner, model, optimizer, loss_fn, dataloader, metrics, params):
     """Train the model on `num_steps` batches
     Args:
         model: (torch.nn.Module) the neural network
@@ -81,8 +81,18 @@ def train(model, optimizer, loss_fn, dataloader, metrics, params):
             optimizer.zero_grad()
             loss.backward()
 
+            # print('pruner.masks_before_sigmoid[3].grad', pruner.masks_before_sigmoid[3].grad)
+            # module_list = list(model.named_modules())
+            # name, mod = module_list[2]
+            # print('mod.weight.grad', mod.weight.grad)
+            # print('mod.weight_mask.grad', mod.weight_mask.grad)
+            # print('mod.weight_orig.grad', mod.weight_orig.grad)
+            # exit()
+
             # performs updates using calculated gradients
             optimizer.step()
+            # undo pruning
+            nets.undo_pruning(model)
 
             # Evaluate summaries only once in a while
             if i % params.save_summary_steps == 0:
@@ -111,7 +121,7 @@ def train(model, optimizer, loss_fn, dataloader, metrics, params):
 
 
 
-def train_and_evaluate(model, train_dataloader, val_dataloader, optimizer, scheduler, loss_fn, metrics, params, 
+def train_and_evaluate(pruner, model, train_dataloader, val_dataloader, optimizer, scheduler, loss_fn, metrics, params, 
                         model_dir, restore_file=None):
     """Train the model and evaluate every epoch.
     Args:
@@ -139,10 +149,10 @@ def train_and_evaluate(model, train_dataloader, val_dataloader, optimizer, sched
         logging.info("Epoch {}/{}".format(epoch + 1, params.num_epochs))
 
         # compute number of batches in one epoch (one full pass over the training set)
-        train(model, optimizer, loss_fn, train_dataloader, metrics, params)
+        train(pruner, model, optimizer, loss_fn, train_dataloader, metrics, params)
 
         # Evaluate for one epoch on validation set
-        val_metrics = evaluate(model, loss_fn, val_dataloader, metrics, params)
+        val_metrics = evaluate(pruner, model, loss_fn, val_dataloader, metrics, params)
 
         # update learning rate scheduler
         if scheduler is not None:
@@ -230,7 +240,7 @@ def main():
     # Define mask method
     pruner = nets.Pruner(model, params.mask_init)
     # Do not actually prune model, so we should undo pruning after each `model.forward()`.
-    model.register_forward_hook(nets.undo_pruning) # or before `loss.backward()`?
+    # model.register_forward_hook(nets.undo_pruning) # or before `loss.backward()`?
 
 
 
@@ -243,7 +253,7 @@ def main():
 
     # Train the model
     logging.info("Starting training for {} epoch(s)".format(params.num_epochs))
-    train_and_evaluate(model, train_dl, val_dl, optimizer, scheduler, loss_fn, metrics, params, 
+    train_and_evaluate(pruner, model, train_dl, val_dl, optimizer, scheduler, loss_fn, metrics, params, 
                         args.model_dir, args.restore_file)
 
 

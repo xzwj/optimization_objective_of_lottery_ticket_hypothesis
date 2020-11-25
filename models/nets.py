@@ -11,11 +11,16 @@ class Pruner(nn.Module):
         self.masks_before_sigmoid = self._init_masks_before_sigmoid(model, mask_init)
         
     def forward(self, model):
-        for mbs, (name, mod) in zip(self.masks_before_sigmoid, model.named_modules()):
-            # get mask
-            mask = torch.sigmoid(mbs)
-            # prune
-            prune.custom_from_mask(mod, name, mask)
+        i = 0
+        for name, mod in model.named_modules():
+            if isinstance(mod, nn.Conv2d) or isinstance(mod, nn.Linear):
+                mask = torch.sigmoid(self.masks_before_sigmoid[i])
+                prune.custom_from_mask(mod, 'weight', mask)
+
+                mask = torch.sigmoid(self.masks_before_sigmoid[i+1])
+                prune.custom_from_mask(mod, 'bias', mask)
+
+                i += 2
 
     def _init_masks_before_sigmoid(self, model, mask_init):
         masks_before_sigmoid = []
@@ -32,11 +37,12 @@ class Pruner(nn.Module):
 
 def undo_pruning(model): 
     for name, mod in model.named_modules():
-        mod.weight_mask.fill_(1.0)
-        mod.bias_mask.fill_(1.0)
+        if isinstance(mod, nn.Conv2d) or isinstance(mod, nn.Linear):
+            mod.weight_mask.fill_(1.0)
+            mod.bias_mask.fill_(1.0)
 
-        prune.remove(mod, 'weight')
-        prune.remove(mod, 'bias')
+            prune.remove(mod, 'weight')
+            prune.remove(mod, 'bias')
 
         
 
@@ -156,7 +162,7 @@ class Loss(nn.Module):
         return l1_norm / self.len_flat_model_weight
 
     def loss3(self, flat_masks, flat_model_weights):
-        l2_norm = torch.norm(flat_model_weights * flat_masks - flat_model_orig_weights * flat_masks, p=2)
+        l2_norm = torch.norm(flat_model_weights * flat_masks - self.flat_model_orig_weights * flat_masks, p=2)
         return l2_norm / self.len_flat_model_weight
 
 
@@ -217,6 +223,7 @@ if __name__ == '__main__':
     # flat_masks = pruner.get_flat_masks()
     # print('flat_masks.shape', flat_masks.shape)
 
+    # ================== Test for `undo_pruning()` ==================
     model = nn.Linear(10, 1)
     print(list(model.named_parameters()))
     print(list(model.named_buffers()))
