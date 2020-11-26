@@ -28,7 +28,7 @@
 
 ## Requirements
 Create a conda environment and install requirements using pip:
-```python
+```bash
 >>> conda create -n lth python=3.7
 >>> source activate lth
 >>> pip install -r requirements.txt
@@ -36,12 +36,19 @@ Create a conda environment and install requirements using pip:
 
 ## How to Run
 Train a model with the specified hyperparameters:
-```
+```bash
 >>> python train.py --model {model name} --dataset {dataset name} --model_dir {hyperparameter directory}
 ```
 
 For example, using LeNet5 and MNIST to train a model with the hyperparameters in experiments/mnist_lenet5/params.json:
-```
+```bash
 >>> python train.py --model lenet5 --dataset mnist --model_dir experiments/mnist_lenet5
 ```
 It will automatically download the dataset and puts it in “data” directory if the dataset is not downloaded. During the training loop, best model weight parameters, last model weight parameters, checkpoint, and training log will be saved in experiments/mnist_lenet5.
+
+Evaluate a LeNet5 model with the checkpoint file “experiments/mnist_lenet5/best.pth.tar”:
+```bash
+>>> python evaluate.py --model lenet5 --dataset mnist --model_dir experiments/mnist_lenet5 --restore_file best
+```
+The evaluation results will be saved in experiments/mnist_lenet5.
+
