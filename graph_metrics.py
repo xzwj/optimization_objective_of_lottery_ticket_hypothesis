@@ -21,7 +21,7 @@ eval_non_zero_mask_percentage_history = pickle.load(open(os.path.join(model_dir,
 print(train_non_zero_mask_percentage_history)
 print(eval_non_zero_mask_percentage_history)
 
-# plot training history
+# plot accuracy history
 fig_1 = plt.figure(1)
 plt.title('Training and testing accuracy ({} {})'.format(dataset.upper(), model_name.upper()))
 plt.plot(train_accuracy_history, color='blue')
@@ -33,7 +33,7 @@ plt.legend(['Train', 'Test'])
 fig_1.savefig(os.path.join(path_to_graphs, 'accuracy.png'))
 plt.close(fig_1)
 
-# plot testing history
+# plot percentage of non-zero masks history
 fig_2 = plt.figure(1)
 plt.title('Training and testing percentage of pruned weights ({} {})'.format(dataset.upper(), model_name.upper()))
 plt.plot(train_non_zero_mask_percentage_history, color='blue')
