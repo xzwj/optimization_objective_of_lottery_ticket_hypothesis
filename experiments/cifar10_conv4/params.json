@@ -1,7 +1,7 @@
 {
     "lr": 1e-3,
     "batch_size": 32,
-    "num_epochs": 100,
+    "num_epochs": 2,
     
     "save_summary_steps": 100,
     "num_workers": 4,

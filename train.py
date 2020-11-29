@@ -150,9 +150,8 @@ def train_and_evaluate(pruner, model, train_dataloader, val_dataloader, optimize
     best_val_acc = 0.0
 
     train_accuracy_history = [0 for x in range(params.num_epochs)]
-    train_non_zero_mask_percentage_history = [0 for x in range(params.num_epochs)]
     eval_accuracy_history = [0 for x in range(params.num_epochs)]
-    eval_non_zero_mask_percentage_history = [0 for x in range(params.num_epochs)]
+    non_zero_mask_percentage_history = [0 for x in range(params.num_epochs)]
 
     for epoch in range(params.num_epochs):
         # Run one epoch
@@ -165,9 +164,8 @@ def train_and_evaluate(pruner, model, train_dataloader, val_dataloader, optimize
         eval_val_metrics = evaluate(pruner, model, loss_fn, val_dataloader, metrics, params)
 
         train_accuracy_history[epoch] = train_val_metrics['accuracy']
-        train_non_zero_mask_percentage_history[epoch] = train_val_metrics['non_zero_mask_percentage']
         eval_accuracy_history[epoch] = eval_val_metrics['accuracy']
-        eval_non_zero_mask_percentage_history[epoch] = eval_val_metrics['non_zero_mask_percentage']
+        non_zero_mask_percentage_history[epoch] = eval_val_metrics['non_zero_mask_percentage']
 
         # update learning rate scheduler
         if scheduler is not None:
@@ -201,9 +199,8 @@ def train_and_evaluate(pruner, model, train_dataloader, val_dataloader, optimize
 
     # save a history of the metrics
     pickle.dump(train_accuracy_history, open(os.path.join(model_dir, 'train_accuracy_history.p'), 'wb'))
-    pickle.dump(train_non_zero_mask_percentage_history, open(os.path.join(model_dir, 'train_non_zero_mask_percentage_history.p'), 'wb'))
     pickle.dump(eval_accuracy_history, open(os.path.join(model_dir, 'eval_accuracy_history.p'), 'wb'))
-    pickle.dump(eval_non_zero_mask_percentage_history, open(os.path.join(model_dir, 'eval_non_zero_mask_percentage_history.p'), 'wb'))
+    pickle.dump(non_zero_mask_percentage_history, open(os.path.join(model_dir, 'non_zero_mask_percentage_history.p'), 'wb'))
 
 
 def main():

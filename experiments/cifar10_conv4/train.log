@@ -1,0 +1,13 @@
+2020-11-29 08:03:08,323:INFO: Loading the datasets...
+2020-11-29 08:05:37,650:INFO: Loading the datasets...
+2020-11-29 08:05:56,138:INFO: Loading the datasets...
+2020-11-29 08:18:47,091:INFO: - done.
+2020-11-29 08:18:47,154:INFO: Starting training for 2 epoch(s)
+2020-11-29 08:18:47,154:INFO: Epoch 1/2
+2020-11-29 08:39:20,707:INFO: - Train metrics: accuracy: 0.455 ; non_zero_mask_percentage: 1.000 ; loss: 1.990
+2020-11-29 08:40:47,381:INFO: - Eval metrics : accuracy: 0.598 ; non_zero_mask_percentage: 1.000 ; loss: 1.605
+2020-11-29 08:40:47,659:INFO: - Found new best accuracy
+2020-11-29 08:40:47,661:INFO: Epoch 2/2
+2020-11-29 09:01:58,639:INFO: - Train metrics: accuracy: 0.582 ; non_zero_mask_percentage: 1.000 ; loss: 1.668
+2020-11-29 09:03:27,635:INFO: - Eval metrics : accuracy: 0.696 ; non_zero_mask_percentage: 1.000 ; loss: 1.369
+2020-11-29 09:03:27,924:INFO: - Found new best accuracy

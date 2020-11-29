@@ -17,7 +17,7 @@
     "lambda1": 0.5,
     "lambda2": 0.5,
 
-    "mask_init": 5.0
+    "mask_init": 3.0
 }
 
 
