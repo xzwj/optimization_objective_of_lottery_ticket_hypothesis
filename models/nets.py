@@ -108,7 +108,67 @@ class MLP(nn.Module):
         x = self.fc3(x)
         return F.log_softmax(x, dim=1)
 
-        
+
+class Conv4(nn.Module):
+    def __init__(self, params):
+        """
+        Args: CIFAR10 Only
+        :param params:
+        """
+        super(Conv4, self).__init__()
+        self.model = nn.Sequential(
+            nn.Conv2d(params.input_channel, 64, 3, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(64, 64, 3, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(2),
+            nn.Conv2d(64, 128, 3, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(128, 128, 3, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(2))
+        self.fc = nn.Sequential(
+            nn.Linear(..., 256),
+            nn.ReLU(),
+            nn.Linear(..., 256),
+            nn.ReLU(),
+            nn.Linear(256, 10)
+        )
+
+    def forward(self, x):
+        # Input: (batch_size, input_channel, input_h, input_w)
+        # After Conv2D: (batch_size, 6, input_h - 4, input_w - 4)
+        # After MaxPool2D: (batch_size, 6, (input_h - 4) // 2, (input_w - 4) // 2)
+        x = self.model(x)
+        # Flat 2-dim features to 1-dim
+        x = x.view(x.size(0), -1) # (batch_size, 16 * (input_h // 4 - 3) * (input_w // 4 - 3))
+        # Finally we have 10 class
+        x = self.fc(x) # (batch_size, num_class)
+
+        return F.log_softmax(x, dim=1)
+
+
+class fc(nn.Module):
+    def __init__(self, params):
+        super(fc, self).__init__()
+        self.fc1 = nn.Sequential(
+                nn.Linear(params.input_channel * params.input_h * params.input_w, 300),
+                nn.ReLU(),
+            )
+        self.fc2 = nn.Sequential(
+                nn.Linear(300, 100),
+                nn.ReLU(),
+            )
+        self.fc3 = nn.Linear(100, 10)
+
+    def forward(self, x):
+        # Flat 2-dim features to 1-dim
+        x = x.view(x.size(0), -1)
+
+        x = self.fc1(x)
+        x = self.fc2(x)
+        x = self.fc3(x)
+        return F.log_softmax(x, dim=1)
 
 
 def accuracy(outputs, labels):
