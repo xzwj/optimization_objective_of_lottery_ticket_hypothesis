@@ -127,7 +127,7 @@ def train(pruner, model, optimizer, loss_fn, dataloader, metrics, params):
 
 
 def train_and_evaluate(pruner, model, train_dataloader, val_dataloader, optimizer, scheduler, loss_fn, metrics, params, 
-                        model_dir, restore_file=None):
+                        model_dir, path_to_pruners, restore_file=None):
     """Train the model and evaluate every epoch.
     Args:
         model: (torch.nn.Module) the neural network
@@ -138,6 +138,7 @@ def train_and_evaluate(pruner, model, train_dataloader, val_dataloader, optimize
         metrics: (dict) a dictionary of functions that compute a metric using the output and labels of each batch
         params: (Params) hyperparameters
         model_dir: (string) directory containing config, weights and log
+        path_to_pruners: (string) directory containing the saved pruners.
         restore_file: (string) optional- name of file to restore from (without its extension .pth.tar)
     """
     # reload weights from restore_file if specified
@@ -196,7 +197,7 @@ def train_and_evaluate(pruner, model, train_dataloader, val_dataloader, optimize
         last_json_path = os.path.join(
             model_dir, "metrics_val_last_weights.json")
         utils.save_dict_to_json(eval_val_metrics, last_json_path)
-
+        pickle.dump(pruner, open(os.path.join(path_to_pruners, 'pruner_'+str(epoch)+'.p'), 'wb'))
     # save a history of the metrics
     pickle.dump(train_accuracy_history, open(os.path.join(model_dir, 'train_accuracy_history.p'), 'wb'))
     pickle.dump(eval_accuracy_history, open(os.path.join(model_dir, 'eval_accuracy_history.p'), 'wb'))
@@ -209,6 +210,10 @@ def main():
     json_path = os.path.join(args.model_dir, 'params.json')
     assert os.path.isfile(json_path), "No json configuration file found at {}".format(json_path)
     params = utils.Params(json_path)
+
+    path_to_pruners = args.model_dir + '/pruners'
+    if not os.path.exists(path_to_pruners):
+        os.mkdir(path_to_pruners)
 
     # use GPU if available
     params.cuda = torch.cuda.is_available()
@@ -271,7 +276,7 @@ def main():
     # Train the model
     logging.info("Starting training for {} epoch(s)".format(params.num_epochs))
     train_and_evaluate(pruner, model, train_dl, val_dl, optimizer, scheduler, loss_fn, metrics, params, 
-                        args.model_dir, args.restore_file)
+                        args.model_dir, path_to_pruners, args.restore_file)
 
 
 
