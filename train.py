@@ -21,15 +21,15 @@ import utils
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', 
-                    default='mnist',
+                    default='cifar10',
                     choices=['cifar10', 'mnist'],
                     help="Choose dataset (cifar10 or mnist)")
 parser.add_argument('--model', 
-                    default='lenet5',
-                    choices=['lenet5', 'vgg11', 'vgg13', 'vgg16', 'vgg19', 'mlp'],
+                    default='conv4_cifar',
+                    choices=['lenet5', 'vgg11', 'vgg13', 'vgg16', 'vgg19', 'mlp', 'fc_mnist', 'conv4_cifar'],
                     help="Choose model (lenet5, vgg[11, 13, 16, 19], or mlp")
 parser.add_argument('--model_dir', 
-                    default='experiments/mnist_lenet5',
+                    default='experiments/cifar_conv4',
                     help="Directory containing params.json")
 parser.add_argument('--restore_file', 
                     default=None,
@@ -225,6 +225,10 @@ def main():
         model = nets.LeNet5(params).cuda() if params.cuda else nets.LeNet5(params)
     elif args.model[:3] == 'vgg':
         model = vgg.VGG(args.model, params).cuda() if params.cuda else nvgg.VGG(args.model, params)
+    elif args.model == 'fc_mnist':
+        model = nets.fc(params).cuda() if params.cuda else nets.fc(params)
+    elif args.model == 'conv4_cifar':
+        model = nets.Conv4(params).cuda() if params.cuda else nets.Conv4(params)
     else:
         model = nets.MLP(params).cuda() if params.cuda else nets.MLP(params)
 
