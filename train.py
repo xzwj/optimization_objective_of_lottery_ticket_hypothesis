@@ -26,11 +26,11 @@ parser.add_argument('--dataset',
                     choices=['cifar10', 'mnist'],
                     help="Choose dataset (cifar10 or mnist)")
 parser.add_argument('--model', 
-                    default='lenet5',
+                    default='fc',
                     choices=['lenet5', 'vgg11', 'vgg13', 'vgg16', 'vgg19', 'mlp', 'fc', 'conv4'],
                     help="Choose model (lenet5, vgg[11, 13, 16, 19], or mlp")
 parser.add_argument('--model_dir', 
-                    default='experiments/mnist_lenet5',
+                    default='experiments/mnist_fc',
                     help="Directory containing params.json")
 parser.add_argument('--restore_file', 
                     default=None,
