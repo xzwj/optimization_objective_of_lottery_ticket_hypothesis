@@ -6,6 +6,7 @@ import os
 from tqdm import tqdm
 
 import numpy as np
+import pickle
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -21,15 +22,15 @@ import utils
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', 
-                    default='cifar10',
+                    default='mnist',
                     choices=['cifar10', 'mnist'],
                     help="Choose dataset (cifar10 or mnist)")
 parser.add_argument('--model', 
-                    default='conv4_cifar',
-                    choices=['lenet5', 'vgg11', 'vgg13', 'vgg16', 'vgg19', 'mlp', 'fc_mnist', 'conv4_cifar'],
+                    default='lenet5',
+                    choices=['lenet5', 'vgg11', 'vgg13', 'vgg16', 'vgg19', 'mlp', 'fc', 'conv4'],
                     help="Choose model (lenet5, vgg[11, 13, 16, 19], or mlp")
 parser.add_argument('--model_dir', 
-                    default='experiments/cifar_conv4',
+                    default='experiments/mnist_lenet5',
                     help="Directory containing params.json")
 parser.add_argument('--restore_file', 
                     default=None,
@@ -104,7 +105,7 @@ def train(pruner, model, optimizer, loss_fn, dataloader, metrics, params):
                 labels_batch = labels_batch.data.cpu().numpy()
 
                 # compute all metrics on this batch
-                summary_batch = {metric: metrics[metric](output_batch, labels_batch)
+                summary_batch = {metric: metrics[metric](output_batch, labels_batch, pruner)
                                  for metric in metrics}
                 summary_batch['loss'] = loss.item()
                 summ.append(summary_batch)
@@ -121,6 +122,7 @@ def train(pruner, model, optimizer, loss_fn, dataloader, metrics, params):
     metrics_string = " ; ".join("{}: {:05.3f}".format(k, v)
                                 for k, v in metrics_mean.items())
     logging.info("- Train metrics: " + metrics_string)
+    return metrics_mean
 
 
 
@@ -147,21 +149,31 @@ def train_and_evaluate(pruner, model, train_dataloader, val_dataloader, optimize
 
     best_val_acc = 0.0
 
+    train_accuracy_history = [0 for x in range(params.num_epochs)]
+    train_non_zero_mask_percentage_history = [0 for x in range(params.num_epochs)]
+    eval_accuracy_history = [0 for x in range(params.num_epochs)]
+    eval_non_zero_mask_percentage_history = [0 for x in range(params.num_epochs)]
+
     for epoch in range(params.num_epochs):
         # Run one epoch
         logging.info("Epoch {}/{}".format(epoch + 1, params.num_epochs))
 
         # compute number of batches in one epoch (one full pass over the training set)
-        train(pruner, model, optimizer, loss_fn, train_dataloader, metrics, params)
+        train_val_metrics = train(pruner, model, optimizer, loss_fn, train_dataloader, metrics, params)
 
         # # Evaluate for one epoch on validation set
-        val_metrics = evaluate(pruner, model, loss_fn, val_dataloader, metrics, params)
+        eval_val_metrics = evaluate(pruner, model, loss_fn, val_dataloader, metrics, params)
+
+        train_accuracy_history[epoch] = train_val_metrics['accuracy']
+        train_non_zero_mask_percentage_history[epoch] = train_val_metrics['non_zero_mask_percentage']
+        eval_accuracy_history[epoch] = eval_val_metrics['accuracy']
+        eval_non_zero_mask_percentage_history[epoch] = eval_val_metrics['non_zero_mask_percentage']
 
         # update learning rate scheduler
         if scheduler is not None:
             scheduler.step()
 
-        val_acc = val_metrics['accuracy']
+        val_acc = eval_val_metrics['accuracy']
         is_best = val_acc >= best_val_acc
 
         # Save weights
@@ -180,20 +192,25 @@ def train_and_evaluate(pruner, model, train_dataloader, val_dataloader, optimize
             # Save best val metrics in a json file in the model directory
             best_json_path = os.path.join(
                 model_dir, "metrics_val_best_weights.json")
-            utils.save_dict_to_json(val_metrics, best_json_path)
+            utils.save_dict_to_json(eval_val_metrics, best_json_path)
 
         # Save latest val metrics in a json file in the model directory
         last_json_path = os.path.join(
             model_dir, "metrics_val_last_weights.json")
-        utils.save_dict_to_json(val_metrics, last_json_path)
+        utils.save_dict_to_json(eval_val_metrics, last_json_path)
+
+    # save a history of the metrics
+    pickle.dump(train_accuracy_history, open(os.path.join(model_dir, 'train_accuracy_history.p'), 'wb'))
+    pickle.dump(train_non_zero_mask_percentage_history, open(os.path.join(model_dir, 'train_non_zero_mask_percentage_history.p'), 'wb'))
+    pickle.dump(eval_accuracy_history, open(os.path.join(model_dir, 'eval_accuracy_history.p'), 'wb'))
+    pickle.dump(eval_non_zero_mask_percentage_history, open(os.path.join(model_dir, 'eval_non_zero_mask_percentage_history.p'), 'wb'))
 
 
 def main():
     # Load the parameters from json file
     args = parser.parse_args()
     json_path = os.path.join(args.model_dir, 'params.json')
-    assert os.path.isfile(
-        json_path), "No json configuration file found at {}".format(json_path)
+    assert os.path.isfile(json_path), "No json configuration file found at {}".format(json_path)
     params = utils.Params(json_path)
 
     # use GPU if available
@@ -224,11 +241,11 @@ def main():
     if args.model == 'lenet5':
         model = nets.LeNet5(params).cuda() if params.cuda else nets.LeNet5(params)
     elif args.model[:3] == 'vgg':
-        model = vgg.VGG(args.model, params).cuda() if params.cuda else nvgg.VGG(args.model, params)
-    elif args.model == 'fc_mnist':
-        model = nets.fc(params).cuda() if params.cuda else nets.fc(params)
-    elif args.model == 'conv4_cifar':
+        model = vgg.VGG(args.model, params).cuda() if params.cuda else vgg.VGG(args.model, params)
+    elif args.model == 'conv4':
         model = nets.Conv4(params).cuda() if params.cuda else nets.Conv4(params)
+    elif args.model == 'fc':
+        model = nets.Fc(params).cuda() if params.cuda else nets.Fc(params)
     else:
         model = nets.MLP(params).cuda() if params.cuda else nets.MLP(params)
 

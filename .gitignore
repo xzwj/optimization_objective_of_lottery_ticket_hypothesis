@@ -137,3 +137,14 @@ dmypy.json
 *.tar.gz
 data/
 
+# Pycharm files
+/.idea/.gitignore
+/.idea/deployment.xml
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/optimization_objective_of_lottery_ticket_hypothesis.iml
+/.idea/inspectionProfiles/profiles_settings.xml
+/.idea/rGraphicsSettings.xml
+/.idea/rpackages.xml
+/.idea/rSettings.xml
+/.idea/vcs.xml

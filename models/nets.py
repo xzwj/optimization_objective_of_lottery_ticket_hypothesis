@@ -128,11 +128,11 @@ class Conv4(nn.Module):
             nn.ReLU(),
             nn.MaxPool2d(2))
         self.fc = nn.Sequential(
-            nn.Linear(..., 256),
+            nn.Linear(8192, 256),
             nn.ReLU(),
-            nn.Linear(..., 256),
+            nn.Linear(256, 256),
             nn.ReLU(),
-            nn.Linear(256, 10)
+            nn.Linear(256, params.num_class)
         )
 
     def forward(self, x):
@@ -148,9 +148,9 @@ class Conv4(nn.Module):
         return F.log_softmax(x, dim=1)
 
 
-class fc(nn.Module):
+class Fc(nn.Module):
     def __init__(self, params):
-        super(fc, self).__init__()
+        super(Fc, self).__init__()
         self.fc1 = nn.Sequential(
                 nn.Linear(params.input_channel * params.input_h * params.input_w, 300),
                 nn.ReLU(),
@@ -159,7 +159,7 @@ class fc(nn.Module):
                 nn.Linear(300, 100),
                 nn.ReLU(),
             )
-        self.fc3 = nn.Linear(100, 10)
+        self.fc3 = nn.Linear(100, params.num_class)
 
     def forward(self, x):
         # Flat 2-dim features to 1-dim
@@ -171,12 +171,13 @@ class fc(nn.Module):
         return F.log_softmax(x, dim=1)
 
 
-def accuracy(outputs, labels):
+def accuracy(outputs, labels, pruner):
     """
     Compute the accuracy, given the outputs and labels for all images.
     Args:
         outputs: (np.ndarray) (batch_size, num_class) - log softmax output of the model
         labels: (np.ndarray) dimension (batch_size), where each element is a value in [0, 1, 2, ..., num_class-1]
+        pruner: not used.
     Returns: (float) accuracy in [0,1]
     """
     # print('outputs', outputs)
@@ -186,9 +187,25 @@ def accuracy(outputs, labels):
     return np.sum(outputs==labels)/float(labels.size)
 
 
+def non_zero_mask_percentage(outputs, labels, pruner):
+    """
+    Compute the percentage of non-zero masks in the pruner.
+    Here, zero is defined as a value smaller than a threshold.
+    Args:
+        outputs: not used
+        labels: not used
+        pruner: (Pruner) the pruner of a model
+    Returns: (float) percentage in [0,1]
+    """
+    # todo: maybe consider a different threshold value
+    threshold = 0.001
+    flat_masks = pruner.get_flat_masks().detach().numpy()
+    return np.count_nonzero(flat_masks[flat_masks > threshold]) / np.size(flat_masks)
+
 # maintain all metrics required in this dictionary- these are used in the training and evaluation loops
 metrics = {
     'accuracy': accuracy,
+    'non_zero_mask_percentage': non_zero_mask_percentage,
     # could add more metrics such as accuracy for each token type
 }
 

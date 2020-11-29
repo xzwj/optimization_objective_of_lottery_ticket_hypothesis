@@ -72,7 +72,7 @@ def evaluate(pruner, model, loss_fn, dataloader, metrics, params):
             labels_batch = labels_batch.data.cpu().numpy()
 
             # compute all metrics on this batch
-            summary_batch = {metric: metrics[metric](output_batch, labels_batch)
+            summary_batch = {metric: metrics[metric](output_batch, labels_batch, pruner)
                              for metric in metrics}
             summary_batch['loss'] = loss.item()
             summ.append(summary_batch)
