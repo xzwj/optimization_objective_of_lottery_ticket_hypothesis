@@ -9,14 +9,14 @@ import models.nets as nets
 dataset = 'mnist'
 model = 'fc'
 
-dataset = 'mnist'
-model = 'lenet5'
+# dataset = 'mnist'
+# model = 'lenet5'
 
 # dataset = 'cifar10'
 # model = 'conv4'
 
-dataset = 'cifar10'
-model = 'lenet5'
+# dataset = 'cifar10'
+# model = 'lenet5'
 
 model_dir = 'experiments/' + dataset + '_' + model
 json_path = os.path.join(model_dir, 'params.json')
@@ -44,10 +44,11 @@ print('non_zero_mask_percentage_history')
 print(non_zero_mask_percentage_history)
 
 # calculate more metrics
+threshold = 0.001
 mean_of_all_masks = graph_metrics_utils.get_mean_of_all_masks(pruner_by_epoch)
 mean_of_non_zero_masks = graph_metrics_utils.get_mean_of_non_zero_masks(pruner_by_epoch)
 last_epoch_flat_masks = pruner_by_epoch[-1].get_flat_masks().detach().numpy()
-
+last_epoch_non_zero_masks = last_epoch_flat_masks[last_epoch_flat_masks >= threshold]
 
 # initialize path to save graphs
 path_to_graphs = model_dir + '/graphs'
@@ -89,3 +90,14 @@ plt.xlabel('mask value')
 plt.ylabel('num of masks')
 fig_3.savefig(os.path.join(path_to_graphs, 'histogram_of_masks.png'))
 plt.close(fig_3)
+
+# plot histogram of non-zero masks
+num_bins = 20
+# bins_list = [0.001, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+fig_4 = plt.figure(4)
+plt.title('Histogram of non-zero mask values ({} {})'.format(dataset.upper(), model.upper()))
+plt.hist(last_epoch_non_zero_masks, bins=num_bins, histtype='bar')
+plt.xlabel('mask value')
+plt.ylabel('num of masks')
+fig_4.savefig(os.path.join(path_to_graphs, 'histogram_of_non_zero_masks.png'))
+plt.close(fig_4)
