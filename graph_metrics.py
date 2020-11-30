@@ -2,11 +2,12 @@ import pickle
 import matplotlib.pyplot as plt
 import os
 import utils
+import graph_metrics_utils
 import models.nets as nets
 
 # change the dataset and model_name
-# dataset = 'mnist'
-# model = 'fc'
+dataset = 'mnist'
+model = 'fc'
 
 # dataset = 'mnist'
 # model = 'lenet5'
@@ -14,8 +15,8 @@ import models.nets as nets
 # dataset = 'cifar10'
 # model = 'conv4'
 
-dataset = 'cifar10'
-model = 'lenet5'
+# dataset = 'cifar10'
+# model = 'lenet5'
 
 model_dir = 'experiments/' + dataset + '_' + model
 json_path = os.path.join(model_dir, 'params.json')
@@ -40,6 +41,9 @@ print(eval_accuracy_history)
 print('non_zero_mask_percentage_history')
 print(non_zero_mask_percentage_history)
 
+mean_of_all_weights = graph_metrics_utils.get_mean_of_all_weights(pruner_by_epoch)
+mean_of_remaining_weights = graph_metrics_utils.get_mean_of_remaining_weights(pruner_by_epoch)
+
 path_to_graphs = model_dir + '/graphs'
 if not os.path.exists(path_to_graphs):
     os.mkdir(path_to_graphs)
@@ -58,12 +62,13 @@ plt.close(fig_1)
 
 # plot mask history
 fig_2 = plt.figure(2)
-plt.title('Percentage and mean of remaining weights ({} {})'.format(dataset.upper(), model.upper()))
+plt.title('Percent and mean of remaining masks ({} {})'.format(dataset.upper(), model.upper()))
 plt.plot(non_zero_mask_percentage_history, color='black', linestyle='dashed')
+plt.plot(mean_of_all_weights, color='blue')
+plt.plot(mean_of_remaining_weights, color='red')
 plt.ylim(-0.05, 1.05)
 plt.xlabel('Epoch')
-plt.ylabel('Remaining weights %')
-# plt.legend(['Remaining weights %', 'mean of remaining weights', 'mean of all weights'])
-# plt.legend(['Remaining weights %'])
-fig_2.savefig(os.path.join(path_to_graphs, 'non_zero_mask_percentage.png'))
+plt.ylabel('% and mean of masks')
+plt.legend(['% of remaining masks', 'mean of all masks', 'mean of remaining masks'])
+fig_2.savefig(os.path.join(path_to_graphs, 'percent_and_mean_of_masks.png'))
 plt.close(fig_2)
