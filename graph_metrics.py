@@ -6,11 +6,11 @@ import graph_metrics_utils
 import models.nets as nets
 
 # change the dataset and model_name
-# dataset = 'mnist'
-# model = 'fc'
+dataset = 'mnist'
+model = 'fc'
 
-# dataset = 'mnist'
-# model = 'lenet5'
+dataset = 'mnist'
+model = 'lenet5'
 
 # dataset = 'cifar10'
 # model = 'conv4'
@@ -46,6 +46,8 @@ print(non_zero_mask_percentage_history)
 # calculate more metrics
 mean_of_all_masks = graph_metrics_utils.get_mean_of_all_masks(pruner_by_epoch)
 mean_of_non_zero_masks = graph_metrics_utils.get_mean_of_non_zero_masks(pruner_by_epoch)
+last_epoch_flat_masks = pruner_by_epoch[-1].get_flat_masks().detach().numpy()
+
 
 # initialize path to save graphs
 path_to_graphs = model_dir + '/graphs'
@@ -79,11 +81,11 @@ plt.close(fig_2)
 
 # plot histogram of masks
 num_bins = 20
-bins_list = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+# bins_list = [0.001, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
 fig_3 = plt.figure(3)
-plt.title('Histogram of masks ({} {})'.format(dataset.upper(), model.upper()))
-plt.hist(mean_of_all_masks, bins=num_bins, histtype='bar')
-plt.xlabel('mean value')
+plt.title('Histogram of mask values ({} {})'.format(dataset.upper(), model.upper()))
+plt.hist(last_epoch_flat_masks, bins=num_bins, histtype='bar')
+plt.xlabel('mask value')
 plt.ylabel('num of masks')
 fig_3.savefig(os.path.join(path_to_graphs, 'histogram_of_masks.png'))
 plt.close(fig_3)
