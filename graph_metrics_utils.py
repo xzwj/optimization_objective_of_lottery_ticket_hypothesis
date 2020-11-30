@@ -7,9 +7,9 @@ import utils
 import models.nets as nets
 
 
-def get_mean_of_all_weights(pruner_by_epoch):
+def get_mean_of_all_masks(pruner_by_epoch):
     """
-    Get the mean of all weights for each pruner in the list of pruners.
+    Get the mean of all masks for each pruner in the list of pruners.
     Args:
         pruner_by_epoch: list of pruners.
     :return: a list of mean values.
@@ -21,7 +21,13 @@ def get_mean_of_all_weights(pruner_by_epoch):
     return mean_by_epoch
 
 
-def get_mean_of_remaining_weights(pruner_by_epoch):
+def get_mean_of_non_zero_masks(pruner_by_epoch):
+    """
+    Get the mean of all non-zero masks for each pruner in the list of pruners.
+    Args:
+        pruner_by_epoch: list of pruners.
+    :return: a list of mean values.
+    """
     threshold = 0.001
     mean_by_epoch = []
     for pruner in pruner_by_epoch:
