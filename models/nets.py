@@ -200,7 +200,7 @@ def non_zero_mask_percentage(outputs, labels, pruner):
     # todo: maybe consider a different threshold value
     threshold = 0.001
     flat_masks = pruner.get_flat_masks().detach().numpy()
-    return np.count_nonzero(flat_masks[flat_masks > threshold]) / np.size(flat_masks)
+    return np.count_nonzero(flat_masks[flat_masks >= threshold]) / np.size(flat_masks)
 
 # maintain all metrics required in this dictionary- these are used in the training and evaluation loops
 metrics = {
