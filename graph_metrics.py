@@ -23,6 +23,7 @@ json_path = os.path.join(model_dir, 'params.json')
 assert os.path.isfile(json_path), "No json configuration file found at {}".format(json_path)
 params = utils.Params(json_path)
 
+# load the pruners
 path_to_pruners = model_dir + '/pruners'
 pruner_by_epoch = []
 for epoch in range(params.num_epochs):
@@ -30,6 +31,7 @@ for epoch in range(params.num_epochs):
     pruner = pickle.load(open(os.path.join(path_to_pruners, 'pruner_'+str(epoch)+'.p'), 'rb'))
     pruner_by_epoch.append(pruner)
 
+# load the accuracy and percent of non-zero masks
 train_accuracy_history = pickle.load(open(os.path.join(model_dir, 'train_accuracy_history.p'), 'rb'))
 eval_accuracy_history = pickle.load(open(os.path.join(model_dir, 'eval_accuracy_history.p'), 'rb'))
 non_zero_mask_percentage_history = pickle.load(open(os.path.join(model_dir, 'non_zero_mask_percentage_history.p'), 'rb'))
@@ -41,9 +43,11 @@ print(eval_accuracy_history)
 print('non_zero_mask_percentage_history')
 print(non_zero_mask_percentage_history)
 
+# calculate more metrics
 mean_of_all_masks = graph_metrics_utils.get_mean_of_all_masks(pruner_by_epoch)
 mean_of_non_zero_masks = graph_metrics_utils.get_mean_of_non_zero_masks(pruner_by_epoch)
 
+# initialize path to save graphs
 path_to_graphs = model_dir + '/graphs'
 if not os.path.exists(path_to_graphs):
     os.mkdir(path_to_graphs)
@@ -67,8 +71,19 @@ plt.plot(non_zero_mask_percentage_history, color='black', linestyle='dashed')
 plt.plot(mean_of_all_masks, color='blue')
 plt.plot(mean_of_non_zero_masks, color='red')
 plt.ylim(-0.05, 1.05)
-plt.xlabel('Epoch')
+plt.xlabel('epoch')
 plt.ylabel('% and mean of masks')
 plt.legend(['% of remaining masks', 'mean of all masks', 'mean of non-zero masks'])
 fig_2.savefig(os.path.join(path_to_graphs, 'percent_and_mean_of_masks.png'))
 plt.close(fig_2)
+
+# plot histogram of masks
+num_bins = 20
+bins_list = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+fig_3 = plt.figure(3)
+plt.title('Histogram of masks ({} {})'.format(dataset.upper(), model.upper()))
+plt.hist(mean_of_all_masks, bins=num_bins, histtype='bar')
+plt.xlabel('mean value')
+plt.ylabel('num of masks')
+fig_3.savefig(os.path.join(path_to_graphs, 'histogram_of_masks.png'))
+plt.close(fig_3)
