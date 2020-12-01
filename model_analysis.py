@@ -27,21 +27,23 @@ from evaluate import evaluate
 # dataset = 'mnist'
 # model_name = 'lenet5'
 
-dataset = 'cifar10'
-model_name = 'conv4'
-
 # dataset = 'cifar10'
-# model_name = 'lenet5'
+# model_name = 'conv4'
+
+dataset = 'cifar10'
+model_name = 'lenet5'
 
 model_dir = 'experiments/' + dataset + '_' + model_name
 json_path = os.path.join(model_dir, 'params.json')
 assert os.path.isfile(json_path), "No json configuration file found at {}".format(json_path)
 params = utils.Params(json_path)
 
+num_epochs = params.num_epochs
+
 # load the pruners
 path_to_pruners = model_dir + '/pruners'
 pruner_by_epoch = []
-for epoch in range(params.num_epochs):
+for epoch in range(num_epochs):
     path_to_pruner = os.path.join(path_to_pruners, 'pruner_'+str(epoch)+'.pt')
     pruner = pickle.load(open(os.path.join(path_to_pruners, 'pruner_'+str(epoch)+'.p'), 'rb'))
     pruner_by_epoch.append(pruner)
