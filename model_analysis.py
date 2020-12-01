@@ -21,17 +21,17 @@ from evaluate import evaluate
 
 
 # change the dataset and model_name
-# dataset = 'mnist'
-# model_name = 'fc'
+dataset = 'mnist'
+model_name = 'fc'
 
-# dataset = 'mnist'
-# model_name = 'lenet5'
-
-dataset = 'cifar10'
-model_name = 'conv4'
+dataset = 'mnist'
+model_name = 'lenet5'
 
 # dataset = 'cifar10'
-# model_name = 'lenet5'
+# model_name = 'conv4'
+
+dataset = 'cifar10'
+model_name = 'lenet5'
 
 model_dir = 'experiments/' + dataset + '_' + model_name
 json_path = os.path.join(model_dir, 'params.json')
@@ -209,10 +209,16 @@ print('mask_size, zero_size, non_zero_size', mask_size, zero_size, non_zero_size
 
 print('L1 norm flat_non_zero_weights_1', np.linalg.norm(flat_non_zero_weights_1, 1))
 print('L1 norm flat_non_zero_weights_2', np.linalg.norm(flat_non_zero_weights_2, 1))
-print('L1 norm of difference', np.linalg.norm(flat_non_zero_weights_2-flat_non_zero_weights_1, 1))
+print('L1 norm of non_zero_weights difference', np.linalg.norm(flat_non_zero_weights_2-flat_non_zero_weights_1, 1))
+print('L1 norm flat_zero_weights_1', np.linalg.norm(flat_zero_weights_1, 1))
+print('L1 norm flat_zero_weights_2', np.linalg.norm(flat_zero_weights_2, 1))
+print('L1 norm of zero_weights difference', np.linalg.norm(flat_zero_weights_2-flat_zero_weights_1, 1))
 
 print('Average L1 norm flat_non_zero_weights_1', np.linalg.norm(flat_non_zero_weights_1, 1)/non_zero_size)
 print('Average L1 norm flat_non_zero_weights_2', np.linalg.norm(flat_non_zero_weights_2, 1)/non_zero_size)
-print('Average L1 norm of difference', np.linalg.norm(flat_non_zero_weights_2-flat_non_zero_weights_1, 1)/non_zero_size)
+print('Average L1 norm non_zero_weights difference', np.linalg.norm(flat_non_zero_weights_2-flat_non_zero_weights_1, 1)/non_zero_size)
+print('Average L1 norm flat_zero_weights_1', np.linalg.norm(flat_zero_weights_1, 1)/zero_size)
+print('Average L1 norm flat_zero_weights_2', np.linalg.norm(flat_zero_weights_2, 1)/zero_size)
+print('Average L1 norm of zero_weights difference', np.linalg.norm(flat_zero_weights_2-flat_zero_weights_1, 1)/zero_size)
 
 
