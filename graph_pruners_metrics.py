@@ -24,7 +24,7 @@ json_path = os.path.join(model_dir, 'params.json')
 assert os.path.isfile(json_path), "No json configuration file found at {}".format(json_path)
 params = utils.Params(json_path)
 num_epochs = params.num_epochs
-num_epochs = 20
+num_epochs = 200
 
 # load the pruners
 path_to_pruners = model_dir + '/pruners'
@@ -53,7 +53,7 @@ if not os.path.exists(path_to_graphs):
 # num_bins = 20
 bins_list = [0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0]
 fig_3 = plt.figure(3)
-plt.title('Histogram of mask values ({} {})'.format(dataset.upper(), model.upper()))
+plt.title('Histogram of mask values after {} epochs ({} {})'.format(num_epochs, dataset.upper(), model.upper()))
 plt.hist(last_epoch_flat_masks, bins=bins_list, histtype='bar')
 plt.xlabel('mask value')
 plt.ylabel('num of masks')
@@ -62,7 +62,7 @@ plt.close(fig_3)
 
 # plot histogram of non-zero masks
 fig_4 = plt.figure(4)
-plt.title('Histogram of non-zero mask values ({} {})'.format(dataset.upper(), model.upper()))
+plt.title('Histogram of non-zero mask values after {} epochs ({} {})'.format(num_epochs, dataset.upper(), model.upper()))
 plt.hist(last_epoch_non_zero_masks, bins=bins_list, histtype='bar')
 plt.xlabel('mask value')
 plt.ylabel('num of masks')
