@@ -35,10 +35,16 @@ flat_zero_mask_times_weight -1.6223969e-06
 mask_size, zero_size, non_zero_size 2425930 1633995 791935
 L1 norm flat_non_zero_weights_1 6694.2734
 L1 norm flat_non_zero_weights_2 258007.44
-L1 norm of difference 257763.22
+L1 norm of non_zero_weights difference 257763.22
+L1 norm flat_zero_weights_1 11696.536
+L1 norm flat_zero_weights_2 24480.158
+L1 norm of zero_weights difference 20065.209
 Average L1 norm flat_non_zero_weights_1 0.008453059199934339
 Average L1 norm flat_non_zero_weights_2 0.32579370466010465
-Average L1 norm of difference 0.32548532234337413
+Average L1 norm non_zero_weights difference 0.32548532234337413
+Average L1 norm flat_zero_weights_1 0.0071582447515521775
+Average L1 norm flat_zero_weights_2 0.014981782810305417
+Average L1 norm of zero_weights difference 0.012279847235992155
 
 CIFAR10 LENET5
 flat_zero_mask_times_weight 7.6216736e-07
