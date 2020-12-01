@@ -3,20 +3,32 @@ flat_zero_mask_times_weight -4.1837316e-06
 mask_size, zero_size, non_zero_size 266610 248949 17661
 L1 norm flat_non_zero_weights_1 372.93997
 L1 norm flat_non_zero_weights_2 25906.93
-L1 norm of difference 25789.293
+L1 norm of non_zero_weights difference 25789.293
+L1 norm flat_zero_weights_1 4751.219
+L1 norm flat_zero_weights_2 67992.94
+L1 norm of zero_weights difference 67106.33
 Average L1 norm flat_non_zero_weights_1 0.02111658297513324
 Average L1 norm flat_non_zero_weights_2 1.4669004975652569
-Average L1 norm of difference 1.4602396788828491
+Average L1 norm non_zero_weights difference 1.4602396788828491
+Average L1 norm flat_zero_weights_1 0.019085110758754804
+Average L1 norm flat_zero_weights_2 0.27311994625405206
+Average L1 norm of zero_weights difference 0.2695585365878152
 
 MNIST LENET5
 flat_zero_mask_times_weight -3.8716526e-06
 mask_size, zero_size, non_zero_size 44426 14250 30176
 L1 norm flat_non_zero_weights_1 1089.8796
 L1 norm flat_non_zero_weights_2 11651.046
-L1 norm of difference 11502.234
+L1 norm of non_zero_weights difference 11502.234
+L1 norm flat_zero_weights_1 500.9038
+L1 norm flat_zero_weights_2 785.3457
+L1 norm of zero_weights difference 516.93884
 Average L1 norm flat_non_zero_weights_1 0.03611743235259395
 Average L1 norm flat_non_zero_weights_2 0.38610305867038375
-Average L1 norm of difference 0.38117160574628844
+Average L1 norm non_zero_weights difference 0.38117160574628844
+Average L1 norm flat_zero_weights_1 0.035151144462719296
+Average L1 norm flat_zero_weights_2 0.055111979166666665
+Average L1 norm of zero_weights difference 0.0362764100191886
 
 CIFAR10 CONV4
 flat_zero_mask_times_weight -1.6223969e-06
@@ -33,8 +45,14 @@ flat_zero_mask_times_weight 7.6216736e-07
 mask_size, zero_size, non_zero_size 62006 25426 36580
 L1 norm flat_non_zero_weights_1 1119.7946
 L1 norm flat_non_zero_weights_2 20707.914
-L1 norm of difference 20641.812
+L1 norm of non_zero_weights difference 20641.812
+L1 norm flat_zero_weights_1 718.98004
+L1 norm flat_zero_weights_2 2676.2075
+L1 norm of zero_weights difference 2355.6538
 Average L1 norm flat_non_zero_weights_1 0.03061220764527235
 Average L1 norm flat_non_zero_weights_2 0.5660993456123565
-Average L1 norm of difference 0.564292304537999
+Average L1 norm non_zero_weights difference 0.564292304537999
+Average L1 norm flat_zero_weights_1 0.028277355522060343
+Average L1 norm flat_zero_weights_2 0.10525475967636475
+Average L1 norm of zero_weights difference 0.09264743996671713
 
