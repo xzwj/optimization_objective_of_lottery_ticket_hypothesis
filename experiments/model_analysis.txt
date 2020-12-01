@@ -1,0 +1,30 @@
+MNIST FC
+flat_zero_mask_times_weight -4.1837316e-06
+mask_size, zero_size, non_zero_size 266610 248949 17661
+L1 norm flat_non_zero_weights_1 372.93997
+L1 norm flat_non_zero_weights_2 25906.93
+L1 norm of difference 25789.293
+Average L1 norm flat_non_zero_weights_1 0.02111658297513324
+Average L1 norm flat_non_zero_weights_2 1.4669004975652569
+Average L1 norm of difference 1.4602396788828491
+
+MNIST LENET5
+flat_zero_mask_times_weight -3.8716526e-06
+mask_size, zero_size, non_zero_size 44426 14250 30176
+L1 norm flat_non_zero_weights_1 1089.8796
+L1 norm flat_non_zero_weights_2 11651.046
+L1 norm of difference 11502.234
+Average L1 norm flat_non_zero_weights_1 0.03611743235259395
+Average L1 norm flat_non_zero_weights_2 0.38610305867038375
+Average L1 norm of difference 0.38117160574628844
+
+CIFAR10 LENET5
+flat_zero_mask_times_weight 7.6216736e-07
+mask_size, zero_size, non_zero_size 62006 25426 36580
+L1 norm flat_non_zero_weights_1 1119.7946
+L1 norm flat_non_zero_weights_2 20707.914
+L1 norm of difference 20641.812
+Average L1 norm flat_non_zero_weights_1 0.03061220764527235
+Average L1 norm flat_non_zero_weights_2 0.5660993456123565
+Average L1 norm of difference 0.564292304537999
+

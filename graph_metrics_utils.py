@@ -34,3 +34,7 @@ def get_mean_of_non_zero_masks(pruner_by_epoch):
         flat_masks = pruner.get_flat_masks().detach().numpy()
         mean_by_epoch.append(np.mean(flat_masks[flat_masks > threshold]))
     return mean_by_epoch
+
+
+def get_percentile_of_value(lis, x):
+    return len(lis[lis < x])/len(lis)
