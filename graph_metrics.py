@@ -6,14 +6,14 @@ import graph_metrics_utils
 import models.nets as nets
 
 # change the dataset and model_name
-dataset = 'mnist'
-model = 'fc'
+# dataset = 'mnist'
+# model = 'fc'
 
 # dataset = 'mnist'
 # model = 'lenet5'
 
-# dataset = 'cifar10'
-# model = 'conv4'
+dataset = 'cifar10'
+model = 'conv4'
 
 # dataset = 'cifar10'
 # model = 'lenet5'

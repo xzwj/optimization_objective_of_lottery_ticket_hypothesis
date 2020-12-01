@@ -1,5 +1,5 @@
 {
-    "accuracy": 0.6958865814696485,
-    "non_zero_mask_percentage": 1.0,
-    "loss": 1.3694602784257346
+    "accuracy": 0.8611222044728435,
+    "non_zero_mask_percentage": 0.32644594031979496,
+    "loss": 0.5943444455964878
 }
