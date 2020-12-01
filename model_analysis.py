@@ -27,11 +27,11 @@ from evaluate import evaluate
 # dataset = 'mnist'
 # model_name = 'lenet5'
 
-# dataset = 'cifar10'
-# model_name = 'conv4'
-
 dataset = 'cifar10'
-model_name = 'lenet5'
+model_name = 'conv4'
+
+# dataset = 'cifar10'
+# model_name = 'lenet5'
 
 model_dir = 'experiments/' + dataset + '_' + model_name
 json_path = os.path.join(model_dir, 'params.json')
