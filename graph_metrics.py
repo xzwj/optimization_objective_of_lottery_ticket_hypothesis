@@ -9,14 +9,14 @@ import models.nets as nets
 # dataset = 'mnist'
 # model = 'fc'
 
-# dataset = 'mnist'
-# model = 'lenet5'
-
-dataset = 'cifar10'
-model = 'conv4'
+dataset = 'mnist'
+model = 'lenet5'
 
 # dataset = 'cifar10'
-# model = 'lenet5'
+# model = 'conv4'
+
+dataset = 'cifar10'
+model = 'lenet5'
 
 model_dir = 'experiments/' + dataset + '_' + model
 json_path = os.path.join(model_dir, 'params.json')
@@ -57,7 +57,7 @@ if not os.path.exists(path_to_graphs):
 
 # plot accuracy history
 fig_1 = plt.figure(1)
-plt.title('Training and testing accuracy ({} {})'.format(dataset.upper(), model.upper()))
+# plt.title('Training and testing accuracy ({} {})'.format(dataset.upper(), model.upper()))
 plt.plot(train_accuracy_history, color='blue')
 plt.plot(eval_accuracy_history, color='red')
 plt.ylim(-0.05, 1.05)
@@ -69,7 +69,7 @@ plt.close(fig_1)
 
 # plot mask history
 fig_2 = plt.figure(2)
-plt.title('Percent and mean of masks ({} {})'.format(dataset.upper(), model.upper()))
+# plt.title('Percent and mean of masks ({} {})'.format(dataset.upper(), model.upper()))
 plt.plot(non_zero_mask_percentage_history, color='black', linestyle='dashed')
 plt.plot(mean_of_all_masks, color='blue')
 plt.plot(mean_of_non_zero_masks, color='red')
@@ -84,7 +84,7 @@ plt.close(fig_2)
 num_bins = 20
 # bins_list = [0.001, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
 fig_3 = plt.figure(3)
-plt.title('Histogram of mask values ({} {})'.format(dataset.upper(), model.upper()))
+# plt.title('Histogram of mask values ({} {})'.format(dataset.upper(), model.upper()))
 plt.hist(last_epoch_flat_masks, bins=num_bins, histtype='bar')
 plt.xlabel('mask value')
 plt.ylabel('num of masks')
@@ -95,7 +95,7 @@ plt.close(fig_3)
 num_bins = 20
 # bins_list = [0.001, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
 fig_4 = plt.figure(4)
-plt.title('Histogram of non-zero mask values ({} {})'.format(dataset.upper(), model.upper()))
+# plt.title('Histogram of non-zero mask values ({} {})'.format(dataset.upper(), model.upper()))
 plt.hist(last_epoch_non_zero_masks, bins=num_bins, histtype='bar')
 plt.xlabel('mask value')
 plt.ylabel('num of masks')
