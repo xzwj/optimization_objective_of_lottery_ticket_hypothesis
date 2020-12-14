@@ -168,6 +168,10 @@ def train_and_evaluate(pruner, model, train_dataloader, val_dataloader, optimize
         eval_accuracy_history[epoch] = eval_val_metrics['accuracy']
         non_zero_mask_percentage_history[epoch] = eval_val_metrics['non_zero_mask_percentage']
 
+        pickle.dump(train_accuracy_history, open(os.path.join(model_dir, 'train_accuracy_history.p'), 'wb'))
+        pickle.dump(eval_accuracy_history, open(os.path.join(model_dir, 'eval_accuracy_history.p'), 'wb'))
+        pickle.dump(non_zero_mask_percentage_history, open(os.path.join(model_dir, 'non_zero_mask_percentage_history.p'), 'wb'))
+
         # update learning rate scheduler
         if scheduler is not None:
             scheduler.step()
@@ -274,8 +278,10 @@ def main():
     metrics = nets.metrics
 
     # Train the model
+    logging.info(args)
+    logging.info(params)
     logging.info("Starting training for {} epoch(s)".format(params.num_epochs))
-    train_and_evaluate(pruner, model, train_dl, val_dl, optimizer, scheduler, loss_fn, metrics, params, 
+    train_and_evaluate(pruner, model, train_dl, val_dl, optimizer, scheduler, loss_fn, metrics, params,
                         args.model_dir, path_to_pruners, args.restore_file)
 
 

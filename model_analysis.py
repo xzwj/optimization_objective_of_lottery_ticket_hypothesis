@@ -40,6 +40,9 @@ params = utils.Params(json_path)
 
 num_epochs = params.num_epochs
 
+# if model_name == 'conv4':
+#     num_epochs = 2
+
 # load the pruners
 path_to_pruners = model_dir + '/pruners'
 pruner_by_epoch = []
