@@ -132,8 +132,9 @@ dmypy.json
 .data/
 .vector_cache/
 
+# The following line is intentionally commented so that previous models can be recovered.
+#*.tar
 
-*.tar
 *.tar.gz
 data/
 

@@ -150,11 +150,29 @@ def train_and_evaluate(pruner, model, train_dataloader, val_dataloader, optimize
 
     best_val_acc = 0.0
 
-    train_accuracy_history = [0 for x in range(params.num_epochs)]
-    eval_accuracy_history = [0 for x in range(params.num_epochs)]
-    non_zero_mask_percentage_history = [0 for x in range(params.num_epochs)]
+    # safe-guard the case where params.prev_epochs is not defined.
+    prev_epochs = -1
+    try:
+        prev_epochs = params.prev_epochs
+    except:
+        prev_epochs = 0
 
-    for epoch in range(params.num_epochs):
+    if prev_epochs == -1:
+        raise ValueError('prev_epochs not set correctly.')
+    if prev_epochs == 0:
+        train_accuracy_history = [0 for x in range(params.num_epochs)]
+        eval_accuracy_history = [0 for x in range(params.num_epochs)]
+        non_zero_mask_percentage_history = [0 for x in range(params.num_epochs)]
+    else:
+        assert restore_file is not None
+        train_accuracy_history = pickle.load(open(os.path.join(model_dir, 'train_accuracy_history.p'), 'rb')) + [0 for x in range(prev_epochs, params.num_epochs)]
+        eval_accuracy_history = pickle.load(open(os.path.join(model_dir, 'eval_accuracy_history.p'), 'rb')) + [0 for x in range(prev_epochs, params.num_epochs)]
+        non_zero_mask_percentage_history = pickle.load(open(os.path.join(model_dir, 'non_zero_mask_percentage_history.p'), 'rb')) + [0 for x in range(prev_epochs, params.num_epochs)]
+        assert len(train_accuracy_history) == params.num_epochs
+        assert len(eval_accuracy_history) == params.num_epochs
+        assert len(non_zero_mask_percentage_history) == params.num_epochs
+
+    for epoch in range(prev_epochs, params.num_epochs):
         # Run one epoch
         logging.info("Epoch {}/{}".format(epoch + 1, params.num_epochs))
 
@@ -279,7 +297,7 @@ def main():
 
     # Train the model
     logging.info(args)
-    logging.info(params)
+    logging.info(params.lr, params.prev_epochs, params.num_epochs, params.lambda1, params.lambda2, params.mask_init)
     logging.info("Starting training for {} epoch(s)".format(params.num_epochs))
     train_and_evaluate(pruner, model, train_dl, val_dl, optimizer, scheduler, loss_fn, metrics, params,
                         args.model_dir, path_to_pruners, args.restore_file)

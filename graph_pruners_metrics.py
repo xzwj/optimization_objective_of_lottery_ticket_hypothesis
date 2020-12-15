@@ -7,8 +7,8 @@ import models.nets as nets
 import numpy as np
 
 # change the dataset and model_name
-# dataset = 'mnist'
-# model = 'fc'
+dataset = 'mnist'
+model = 'fc'
 
 # dataset = 'mnist'
 # model = 'lenet5'
@@ -16,15 +16,15 @@ import numpy as np
 # dataset = 'cifar10'
 # model = 'conv4'
 
-dataset = 'cifar10'
-model = 'lenet5'
+# dataset = 'cifar10'
+# model = 'lenet5'
 
 model_dir = 'experiments/' + dataset + '_' + model
 json_path = os.path.join(model_dir, 'params.json')
 assert os.path.isfile(json_path), "No json configuration file found at {}".format(json_path)
 params = utils.Params(json_path)
 num_epochs = params.num_epochs
-num_epochs = 200
+num_epochs = 10
 
 # load the pruners
 path_to_pruners = model_dir + '/pruners'
